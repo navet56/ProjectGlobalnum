@@ -47,9 +47,9 @@ class Joueur(pygame.sprite.Sprite):
             self.change_y = 1
         else:
             self.change_y += .35
-        if self.rect.y >= ECRAN_HAUTEUR - self.rect.height and self.change_y >= 0:
+        if self.rect.y >= ECRAN_HAUTEUR - self.rect.hauteur and self.change_y >= 0:
             self.change_y = 0
-            self.rect.y = ECRAN_HAUTEUR - self.rect.height
+            self.rect.y = ECRAN_HAUTEUR - self.rect.hauteur
  
     def jump(self):
         self.rect.y += 2
@@ -73,7 +73,7 @@ class Joueur(pygame.sprite.Sprite):
  
 class Platform(pygame.sprite.Sprite):
     """ Platform the user can jump on """
-    def init(self, width, height):
+    def init(self, longueur, hauteur):
         super().init()
         self.image = pygame.Surface([longueur, hauteur])
         self.image.fill(VERT)
@@ -120,10 +120,11 @@ class Level_01(Level):
             block.rect.y = platform[3]
             block.joueur = self.joueur
             self.platform_list.add(block)
+
+
 #Main Loop
 pygame.init()
-taille = [ECRAN_LONGUEUR, ECRAN_HAUTEUR]
-ecran = pygame.display.set_mode(taille)
+ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Global Num")
 joueur = Joueur()
 level_list = []
