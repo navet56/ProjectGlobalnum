@@ -23,8 +23,7 @@ class Joueur(pygame.sprite.Sprite):
         self.level = None
  
     def update(self):
-        """ Move the player. """
-        self.calc_grav()
+        self.grav()
         self.rect.x += self.change_x
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         for block in block_hit_list:
@@ -41,8 +40,7 @@ class Joueur(pygame.sprite.Sprite):
                 self.rect.top = block.rect.bottom
             self.change_y = 0
  
-    def calc_grav(self):
-        """ Calculate effect of gravity. """
+    def grav(self):
         if self.change_y == 0:
             self.change_y = 1
         else:
@@ -60,11 +58,9 @@ class Joueur(pygame.sprite.Sprite):
             self.change_y = -10
 
     def go_left(self):
-        """ Called when the user hits the left arrow. """
         self.change_x = -6
  
     def go_right(self):
-        """ Called when the user hits the right arrow. """
         self.change_x = 6
  
     def stop(self):
@@ -79,7 +75,7 @@ class Platform(pygame.sprite.Sprite):
         self.image.fill(VERT)
         self.rect = self.image.get_rect()
 
-class Level(object):
+class Level(object):#Classe Niveau en general
     def init(self, joueur):
         """ Constructor. Pass in a handle to player. Needed for when moving platforms
             collide with the player. """
@@ -98,11 +94,10 @@ class Level(object):
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
 
-# Create platforms for the level
-class Level_01(Level):
-    """ Definition for level 1. """
+class Level_01(Level): #Classe Level1 qui prend comme base la classe Level
+
     def init(self, joueur):
-        """ Create level 1. """
+        """ Creattion du level 1. """
         Level.init(self, joueur)#On ajout les variables du init de Level dans cet init
  
         level = [[210, 70, 500, 500],
@@ -122,7 +117,7 @@ class Level_01(Level):
             self.platform_list.add(block)
 
 
-#Main Loop
+#Boucle principale
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Global Num")
@@ -138,7 +133,7 @@ joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.hauteur
 active_sprite_list.add(joueur)
 done = False
 clock = pygame.time.Clock()
-# -------- Main Program Loop -----------
+
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
