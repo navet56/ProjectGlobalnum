@@ -10,9 +10,9 @@ ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 
 class Joueur(pygame.sprite.Sprite):
-    def init(self):
+    def __init__(self):
         """ Constructor function """
-        super().init() #Appelle le constructeur de la classe mère
+        super().__init__() #Appelle le constructeur de la classe mère
         longueur = 40
         hauteur = 60
         self.image = pygame.Surface([longueur, hauteur])
@@ -23,6 +23,8 @@ class Joueur(pygame.sprite.Sprite):
         self.level = None
  
     def update(self):
+        print("x :", self.rect.x)
+        print("y :", self.rect.y)
         self.grav()
         self.rect.x += self.change_x
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
@@ -45,9 +47,9 @@ class Joueur(pygame.sprite.Sprite):
             self.change_y = 1
         else:
             self.change_y += .35
-        if self.rect.y >= ECRAN_HAUTEUR - self.rect.hauteur and self.change_y >= 0:
+        if self.rect.y >= ECRAN_HAUTEUR - self.rect.height and self.change_y >= 0:
             self.change_y = 0
-            self.rect.y = ECRAN_HAUTEUR - self.rect.hauteur
+            self.rect.y = ECRAN_HAUTEUR - self.rect.height
  
     def jump(self):
         self.rect.y += 2
@@ -66,17 +68,21 @@ class Joueur(pygame.sprite.Sprite):
     def stop(self):
         """ Called when the user lets off the keyboard. """
         self.change_x = 0
+        
+    def setRect(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
  
 class Platform(pygame.sprite.Sprite):
     """ Platform the user can jump on """
-    def init(self, longueur, hauteur):
-        super().init()
+    def __init__(self, longueur, hauteur):
+        super().__init__()
         self.image = pygame.Surface([longueur, hauteur])
         self.image.fill(VERT)
         self.rect = self.image.get_rect()
 
 class Level(object):#Classe Niveau en general
-    def init(self, joueur):
+    def __init__(self, joueur):
         """ Constructor. Pass in a handle to player. Needed for when moving platforms
             collide with the player. """
         self.platform_list = pygame.sprite.Group()
@@ -96,9 +102,9 @@ class Level(object):#Classe Niveau en general
 
 class Level_01(Level): #Classe Level1 qui prend comme base la classe Level
 
-    def init(self, joueur):
+    def __init__(self, joueur):
         """ Creattion du level 1. """
-        Level.init(self, joueur)#On ajout les variables du init de Level dans cet init
+        super().__init__(joueur)#On ajout les variables du init de Level dans cet init
  
         level = [[210, 70, 500, 500],
                  [210, 70, 200, 400],
@@ -121,15 +127,16 @@ class Level_01(Level): #Classe Level1 qui prend comme base la classe Level
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Global Num")
+
 joueur = Joueur()
 level_list = []
-level_list.append( Level_01() )
+level_list.append( Level_01(joueur) )
 current_level_no = 0
 current_level = level_list[current_level_no]
 active_sprite_list = pygame.sprite.Group()
-joueur.level = current_level
 joueur.rect.x = 340
-joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.hauteur
+joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
+joueur.level = current_level
 active_sprite_list.add(joueur)
 done = False
 clock = pygame.time.Clock()
