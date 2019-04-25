@@ -56,7 +56,7 @@ class Joueur(pygame.sprite.Sprite):
         platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         self.rect.y -= 2
  
-        if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_LONGUEUR:
+        if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
             self.change_y = -10
 
     def go_left(self):
