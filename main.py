@@ -166,6 +166,6 @@ while not done:
         joueur.rect.left = 0
     current_level.draw(ecran)
     active_sprite_list.draw(ecran)
-    clock.tick(20)
+    clock.tick(120)
     pygame.display.flip()
 pygame.quit()
