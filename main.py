@@ -12,6 +12,13 @@ ECRAN_HAUTEUR = 720
 bg = pygame.image.load("background.png")
 pygame.mixer.init(44100, -16,2,2048)
 sonjump = pygame.mixer.Sound("jump.ogg")
+def text_format(message, textFont, textSize, textColor):
+    newFont=pygame.font.Font(textFont, textSize)
+    newText=newFont.render(message, 0, textColor)
+
+    return newText
+font = "Retro.ttf"
+
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):#Constructeur
         super().__init__() #Appelle le constructeur de la classe mère
@@ -131,35 +138,70 @@ joueur.rect.x = 340
 joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
 joueur.level = current_level
 active_sprite_list.add(joueur)
-done = False
+continuer = 1
 clock = pygame.time.Clock()
-while not done:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        if event.type == pygame.KEYDOWN:#Si une touche est préssée
-            if event.key == pygame.K_LEFT:#La touche fleche gauche :
-                joueur.go_left()
-            if event.key == pygame.K_RIGHT:#etc
-                joueur.go_right()
-            if event.key == pygame.K_UP:
-                sonjump.play()
-                joueur.jump()
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT and joueur.change_x < 0:
-                joueur.stop()
-                sonjump.stop()
-            if event.key == pygame.K_RIGHT and joueur.change_x > 0:
-                joueur.stop()
-    active_sprite_list.update()
-    current_level.update()
-    if joueur.rect.right > ECRAN_LONGUEUR:
-        joueur.rect.right = ECRAN_LONGUEUR
-    if joueur.rect.left < 0:
-        joueur.rect.left = 0
-    ecran.blit(bg, (0, 0))
-    current_level.draw(ecran)
-    active_sprite_list.draw(ecran)
-    clock.tick(60)
-    pygame.display.flip()
+while continuer:
+    menu=True
+    selected="start"
+    while menu:
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_UP:
+                    selected="start"
+                elif event.key==pygame.K_DOWN:
+                    selected="quit"
+                if event.key==pygame.K_RETURN:
+                    if selected=="start":
+                        jeu=True
+                        menu=False
+                    if selected=="quit":
+                        pygame.quit()
+                        quit()
+
+        # Main Menu UI
+        fond=pygame.image.load("bkgmenu.png").convert()
+        perso = pygame.image.load("persomenu1.png").convert_alpha()
+        if selected=="start":
+            perso = pygame.image.load("persomenu1.png").convert_alpha()
+        if selected=="quit":
+            perso = pygame.image.load("persomenu3.png").convert_alpha()
+
+
+        # Main Menu Text
+        ecran.blit(fond, (0,0))
+        ecran.blit(perso,(860,237))
+        pygame.display.update()
+
+    while jeu:  
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                continuer = 0
+            if event.type == pygame.KEYDOWN:#Si une touche est préssée
+                if event.key == pygame.K_LEFT:#La touche fleche gauche :
+                    joueur.go_left()
+                if event.key == pygame.K_RIGHT:#etc
+                    joueur.go_right()
+                if event.key == pygame.K_UP:
+                    sonjump.play()
+                    joueur.jump()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT and joueur.change_x < 0:
+                    joueur.stop()
+                    sonjump.stop()
+                if event.key == pygame.K_RIGHT and joueur.change_x > 0:
+                    joueur.stop()
+        active_sprite_list.update()
+        current_level.update()
+        if joueur.rect.right > ECRAN_LONGUEUR:
+            joueur.rect.right = ECRAN_LONGUEUR
+        if joueur.rect.left < 0:
+            joueur.rect.left = 0
+        ecran.blit(bg, (0, 0))
+        current_level.draw(ecran)
+        active_sprite_list.draw(ecran)
+        clock.tick(60)
+        pygame.display.flip()
 pygame.quit()
