@@ -12,6 +12,7 @@ ECRAN_HAUTEUR = 720
 bg = pygame.image.load("background.png")
 pygame.mixer.init(44100, -16,2,2048)
 sonjump = pygame.mixer.Sound("jump.ogg")
+
 def text_format(message, textFont, textSize, textColor):
     newFont=pygame.font.Font(textFont, textSize)
     newText=newFont.render(message, 0, textColor)
