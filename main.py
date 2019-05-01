@@ -142,7 +142,7 @@ continuer = 1
 clock = pygame.time.Clock()
 while continuer:
     menu=True
-    selected="start"
+    selected=1
     while menu:
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -150,23 +150,29 @@ while continuer:
                 quit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_UP:
-                    selected="start"
+                    selected=selected-1
+                    if selected==0:
+                        selected=1
                 elif event.key==pygame.K_DOWN:
-                    selected="quit"
+                    selected=selected+1
+                    if selected==4:
+                        selected=3
                 if event.key==pygame.K_RETURN:
-                    if selected=="start":
+                    if selected==1:
                         jeu=True
                         menu=False
-                    if selected=="quit":
+                    if selected==3:
                         pygame.quit()
                         quit()
 
         # Main Menu UI
         fond=pygame.image.load("bkgmenu.png").convert()
         perso = pygame.image.load("persomenu1.png").convert_alpha()
-        if selected=="start":
+        if selected==1:
             perso = pygame.image.load("persomenu1.png").convert_alpha()
-        if selected=="quit":
+        if selected==2:
+            perso = pygame.image.load("persomenu2.png").convert_alpha()
+        if selected==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
 
 
