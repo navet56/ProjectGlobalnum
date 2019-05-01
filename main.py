@@ -193,12 +193,16 @@ while continuer:
                 if event.key == pygame.K_UP:
                     sonjump.play()
                     joueur.jump()
+                if event.key == pygame.K_m:
+                    jeu=False
+                    menu=True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT and joueur.change_x < 0:
                     joueur.stop()
                     sonjump.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
                     joueur.stop()
+                    sonjump.stop()
         active_sprite_list.update()
         current_level.update()
         if joueur.rect.right > ECRAN_LONGUEUR:
