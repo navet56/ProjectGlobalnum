@@ -6,6 +6,7 @@ ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 bg = pygame.image.load("background.png")
 pygame.mixer.init(44100, -16,2,2048)
+musique = pygame.mixer.music.load("musique.mp3")
 sonjump = pygame.mixer.Sound("jump.ogg")
 fond=pygame.image.load("bkgmenu.png")
 perso = pygame.image.load("persomenu1.png")
@@ -124,6 +125,7 @@ joueur.level = current_level
 active_sprite_list.add(joueur)
 continuer = 1
 clock = pygame.time.Clock()
+pygame.mixer.music.play(loops=-1)
 
 while continuer:
     menu=True
@@ -144,6 +146,7 @@ while continuer:
                         selected=3
                 if event.key==pygame.K_RETURN:
                     if selected==1:
+                        pygame.mixer.stop()
                         jeu=True
                         menu=False
                     if selected==3:
