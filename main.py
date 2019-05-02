@@ -61,6 +61,7 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.y -= 2
         #Effectue le saut
         if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
+            sonjump.play()
             self.change_y = -10#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
 
     def go_left(self):
@@ -175,9 +176,6 @@ while continuer:
                         pygame.quit()
                         quit()
 
-        
-        
-       
         if selected==1:
             perso = pygame.image.load("persomenu1.png").convert_alpha()
         if selected==2:
@@ -210,7 +208,6 @@ while continuer:
                 if event.key == pygame.K_RIGHT:#etc
                     joueur.go_right()
                 if event.key == pygame.K_UP:
-                    sonjump.play()
                     joueur.jump()
                 if event.key == pygame.K_ESCAPE:
                     pygame.mixer.music.play(loops=-1)
@@ -230,7 +227,7 @@ while continuer:
             joueur.rect.right = 500
             current_level.shift_world(-diff)
             
-         if joueur.rect.left <= 120:
+        if joueur.rect.left <= 120:
             diff = 120 - joueur.rect.left
             joueur.rect.left = 120
             current_level.shift_world(diff)
