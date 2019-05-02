@@ -2,14 +2,15 @@
 import pygame
 from pygame.locals import *
 
+
 ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 bg = pygame.image.load("background.png")
 pygame.mixer.init(44100, -16,2,2048)
 musique = pygame.mixer.music.load("musique.mp3")
 sonjump = pygame.mixer.Sound("jump.ogg")
-fond=pygame.image.load("bkgmenu.png")
 perso = pygame.image.load("persomenu1.png")
+fond = pygame.image.load("bkgmenu.png")
 
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):#Constructeur
@@ -60,7 +61,7 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.y -= 2
         #Effectue le saut
         if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
-            self.change_y = -10 #-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
+            self.change_y = -10#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
 
     def go_left(self):
         self.change_x = -6 #on déplace le sprite de 6 pixels
@@ -78,11 +79,13 @@ class Platform(pygame.sprite.Sprite):
         self.image.fill((0,100,50))
         self.rect = self.image.get_rect()
 
-class Level(object):#Classe Level en general
+class Level(object):#Classe Niveau en general
     def __init__(self, joueur):
+
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
+        self.background = None
     def update(self):
         self.platform_list.update()
         self.enemy_list.update()
@@ -92,6 +95,7 @@ class Level(object):#Classe Level en general
         self.enemy_list.draw(ecran)
 
 class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
+
     def __init__(self, joueur):
         """ Creattion du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
@@ -124,11 +128,12 @@ joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
 joueur.level = current_level
 active_sprite_list.add(joueur)
 continuer = 1
-clock = pygame.time.Clock()
 pygame.mixer.music.play(loops=-1)
+clock = pygame.time.Clock()
 
 while continuer:
     menu=True
+    credit=False
     selected=1
     while menu:
         for event in pygame.event.get():
@@ -146,27 +151,45 @@ while continuer:
                         selected=3
                 if event.key==pygame.K_RETURN:
                     if selected==1:
-                        pygame.mixer.stop()
+                        pygame.mixer.music.stop()
                         jeu=True
                         menu=False
+                    if selected==2:
+                        menu = False
+                        credit = True
                     if selected==3:
                         pygame.quit()
                         quit()
+
+        
+        
+       
         if selected==1:
             perso = pygame.image.load("persomenu1.png").convert_alpha()
         if selected==2:
             perso = pygame.image.load("persomenu2.png").convert_alpha()
         if selected==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
+
+
+        # Main Menu Text
         ecran.blit(fond, (0,0))
         ecran.blit(perso,(860,237))
         pygame.display.update()
-
+    while credit:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    credit=False
+                    jeu=False
+                    menu=True
+        ecran.blit(bg,(0,0))
+        pygame.display.update()
     while jeu:  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                jeu = False
                 continuer = False
+                jeu = False
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
                     joueur.go_left()
@@ -175,9 +198,10 @@ while continuer:
                 if event.key == pygame.K_UP:
                     sonjump.play()
                     joueur.jump()
-                if event.key == pygame.K_m:
-                    menu=True
+                if event.key == pygame.K_ESCAPE:
+                    pygame.mixer.music.play(loops=-1)
                     jeu=False
+                    menu=True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT and joueur.change_x < 0:
                     joueur.stop()
@@ -194,8 +218,7 @@ while continuer:
         ecran.blit(bg, (0, 0))
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
-        clock.tick(40)
+        clock.tick(60)
         pygame.display.flip()
-
+        pygame.display.update()
 pygame.quit()
-quit()
