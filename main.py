@@ -85,7 +85,7 @@ class Level(object):#Classe Niveau en general
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
-        self.background = None
+        self.world_shift = 0
     def update(self):
         self.platform_list.update()
         self.enemy_list.update()
@@ -93,6 +93,19 @@ class Level(object):#Classe Niveau en general
     def draw(self, ecran):
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
+    def shift_world(self, shift_x):
+        """ When the user moves left/right and we need to scroll
+        everything: """
+ 
+        # Keep track of the shift amount
+        self.world_shift += shift_x
+ 
+        # Go through all the sprite lists and shift
+        for platform in self.platform_list:
+            platform.rect.x += shift_x
+ 
+        for enemy in self.enemy_list:
+            enemy.rect.x += shift_x
 
 class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
 
@@ -211,6 +224,23 @@ while continuer:
                     sonjump.stop()
         active_sprite_list.update()
         current_level.update()
+        if joueur.rect.right >= 500:
+            diff = joueur.rect.right - 500
+            joueur.rect.right = 500
+            current_level.shift_world(-diff)
+            
+         if joueur.rect.left <= 120:
+            diff = 120 - joueur.rect.left
+            joueur.rect.left = 120
+            current_level.shift_world(diff)
+ 
+        current_position = joueur.rect.x + current_level.world_shift
+        if current_position < current_level.level_limit:
+            joueur.rect.x = 120
+            if current_level_no < len(level_list)-1:
+                current_level_no += 1
+                current_level = level_list[current_level_no]
+                joueur.level = current_level
         if joueur.rect.right > ECRAN_LONGUEUR:
             joueur.rect.right = ECRAN_LONGUEUR
         if joueur.rect.left < 0:
