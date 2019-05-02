@@ -4,9 +4,9 @@ from pygame.locals import *
 
 ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
-bg = pygame.image.load("background.png")
+bgcredit = pygame.image.load("bkgcredits.png")
 pygame.mixer.init(44100, -16,2,2048)
-musique = pygame.mixer.music.load("musique.mp3")
+musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fond = pygame.image.load("bkgmenu.png")
@@ -80,6 +80,8 @@ class Platform(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 class Level(object):#Classe Niveau en general
+    bg = pygame.image.load("background.png")
+
     def __init__(self, joueur):
 
         self.platform_list = pygame.sprite.Group()
@@ -91,6 +93,7 @@ class Level(object):#Classe Niveau en general
         self.enemy_list.update()
  
     def draw(self, ecran):
+        ecran.blit(self.bg,(self.monde_scrolling // 1,0))
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
         
@@ -162,6 +165,8 @@ while continuer:
                         pygame.mixer.music.stop()
                         jeu=True
                         menu=False
+                        musique = pygame.mixer.music.load("level1.ogg")
+                        pygame.mixer.music.play(loops=-1)
                     if selected==2:
                         menu = False
                         credit = True
@@ -177,7 +182,7 @@ while continuer:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
 
         ecran.blit(fond, (0,0))
-        ecran.blit(perso,(860,237))
+        ecran.blit(perso,(760,237))
         pygame.display.update()
         
     while credit:
@@ -187,7 +192,7 @@ while continuer:
                     credit=False
                     jeu=False
                     menu=True
-        ecran.blit(bg,(0,0))
+        ecran.blit(bgcredit,(0,0))
         pygame.display.update()
         
     while jeu:  
@@ -203,6 +208,7 @@ while continuer:
                 if event.key == pygame.K_UP:
                     joueur.jump()
                 if event.key == pygame.K_ESCAPE:
+                    musique = pygame.mixer.music.load("menu.ogg")
                     pygame.mixer.music.play(loops=-1)
                     jeu=False
                     menu=True
@@ -231,11 +237,12 @@ while continuer:
                 current_level_no += 1
                 current_level = level_list[current_level_no]
                 joueur.level = current_level
-        if joueur.rect.right > ECRAN_LONGUEUR:
-            joueur.rect.right = ECRAN_LONGUEUR
+        if joueur.rect.left == ECRAN_HAUTEUR:
+            print("alerte bas")
+            jeu=False
+            credit=True
         if joueur.rect.left < 0:
             joueur.rect.left = 0
-        ecran.blit(bg, (0, 0))
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
         clock.tick(60)
