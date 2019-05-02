@@ -10,13 +10,6 @@ sonjump = pygame.mixer.Sound("jump.ogg")
 fond=pygame.image.load("bkgmenu.png")
 perso = pygame.image.load("persomenu1.png")
 
-def text_format(message, textFont, textSize, textColor):
-    newFont=pygame.font.Font(textFont, textSize)
-    newText=newFont.render(message, 0, textColor)
-
-    return newText
-font = "Retro.ttf"
-
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):#Constructeur
         super().__init__() #Appelle le constructeur de la classe mère
@@ -66,7 +59,7 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.y -= 2
         #Effectue le saut
         if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
-            self.change_y = -10
+            self.change_y = -10 #-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
 
     def go_left(self):
         self.change_x = -6 #on déplace le sprite de 6 pixels
@@ -81,7 +74,7 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
         super().__init__()
         self.image = pygame.Surface([longueur, hauteur])
-        self.image.fill((0,100,50))#a modifier
+        self.image.fill((0,100,50))
         self.rect = self.image.get_rect()
 
 class Level(object):#Classe Level en general
@@ -198,7 +191,7 @@ while continuer:
         ecran.blit(bg, (0, 0))
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
-        clock.tick(120)
+        clock.tick(40)
         pygame.display.flip()
 
 pygame.quit()
