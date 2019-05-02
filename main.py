@@ -209,19 +209,17 @@ while continuer:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT and joueur.change_x < 0:
                     joueur.stop()
-                    sonjump.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
                     joueur.stop()
-                    sonjump.stop()
         active_sprite_list.update()
         current_level.update()
         
-        if joueur.rect.right >= 500:
+        if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
             diff = joueur.rect.right - 500
             joueur.rect.right = 500
             current_level.scrolling(-diff)
             
-        if joueur.rect.left <= 120:
+        if joueur.rect.left <= 120:#pareil l'autre coté
             diff = 120 - joueur.rect.left
             joueur.rect.left = 120
             current_level.scrolling(diff)
