@@ -81,15 +81,14 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
         super().__init__()
         self.image = pygame.Surface([longueur, hauteur])
-        self.image.fill((0,255,0))#a modifier
+        self.image.fill((0,100,50))#a modifier
         self.rect = self.image.get_rect()
 
-class Level(object):#Classe Niveau en general
+class Level(object):#Classe Level en general
     def __init__(self, joueur):
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
-        self.background = None
     def update(self):
         self.platform_list.update()
         self.enemy_list.update()
@@ -103,14 +102,10 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
         """ Creattion du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
  
-        level = [[210, 70, 500, 500], #plateformes du niveau
-                 [210, 70, 200, 400],
-                 [210, 70, 600, 300],
-                 [350, 400, 700, 700],
-                 [210, 70, 500, 500],
-                 [710, 70, 500, 400],
-                 [710, 70, 600, 300],
-                 [350, 70, 0, 0],
+        level = [[100, 30, 100, 600],#plateformes du niveau
+                 [100, 30, 400, 700],
+                 [100, 30, 500, 500],
+                 [100, 30, 750, 400],
                  ]
 
         for platform in level:
