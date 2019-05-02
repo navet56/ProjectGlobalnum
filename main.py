@@ -2,16 +2,13 @@
 import pygame
 from pygame.locals import *
 
-VERT = (0,255,0)
-BLANC = (255,255,255)
-NOIR = (0,0,0)
-BLEU = (0,0,255)
-ROUGE = (255, 0, 0)
 ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 bg = pygame.image.load("background.png")
 pygame.mixer.init(44100, -16,2,2048)
 sonjump = pygame.mixer.Sound("jump.ogg")
+fond=pygame.image.load("bkgmenu.png")
+perso = pygame.image.load("persomenu1.png")
 
 def text_format(message, textFont, textSize, textColor):
     newFont=pygame.font.Font(textFont, textSize)
@@ -84,12 +81,11 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
         super().__init__()
         self.image = pygame.Surface([longueur, hauteur])
-        self.image.fill(VERT)#a modifier
+        self.image.fill((0,255,0))#a modifier
         self.rect = self.image.get_rect()
 
 class Level(object):#Classe Niveau en general
     def __init__(self, joueur):
-
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
@@ -103,7 +99,6 @@ class Level(object):#Classe Niveau en general
         self.enemy_list.draw(ecran)
 
 class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
-
     def __init__(self, joueur):
         """ Creattion du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
@@ -141,6 +136,7 @@ joueur.level = current_level
 active_sprite_list.add(joueur)
 continuer = 1
 clock = pygame.time.Clock()
+
 while continuer:
     menu=True
     selected=1
@@ -165,19 +161,12 @@ while continuer:
                     if selected==3:
                         pygame.quit()
                         quit()
-
-        # Main Menu UI
-        fond=pygame.image.load("bkgmenu.png").convert()
-        perso = pygame.image.load("persomenu1.png").convert_alpha()
         if selected==1:
             perso = pygame.image.load("persomenu1.png").convert_alpha()
         if selected==2:
             perso = pygame.image.load("persomenu2.png").convert_alpha()
         if selected==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
-
-
-        # Main Menu Text
         ecran.blit(fond, (0,0))
         ecran.blit(perso,(860,237))
         pygame.display.update()
@@ -185,7 +174,8 @@ while continuer:
     while jeu:  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                continuer = 0
+                jeu = False
+                continuer = False
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
                     joueur.go_left()
@@ -195,8 +185,8 @@ while continuer:
                     sonjump.play()
                     joueur.jump()
                 if event.key == pygame.K_m:
-                    jeu=False
                     menu=True
+                    jeu=False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT and joueur.change_x < 0:
                     joueur.stop()
@@ -213,6 +203,8 @@ while continuer:
         ecran.blit(bg, (0, 0))
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
-        clock.tick(60)
+        clock.tick(120)
         pygame.display.flip()
+
 pygame.quit()
+quit()
