@@ -2,7 +2,6 @@
 import pygame
 from pygame.locals import *
 
-
 ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 bg = pygame.image.load("background.png")
@@ -86,7 +85,7 @@ class Level(object):#Classe Niveau en general
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
-        self.world_shift = 0
+        self.monde_scrolling = 0
     def update(self):
         self.platform_list.update()
         self.enemy_list.update()
@@ -94,17 +93,11 @@ class Level(object):#Classe Niveau en general
     def draw(self, ecran):
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
-    def shift_world(self, shift_x):
-        """ When the user moves left/right and we need to scroll
-        everything: """
- 
-        # Keep track of the shift amount
-        self.world_shift += shift_x
- 
-        # Go through all the sprite lists and shift
-        for platform in self.platform_list:
-            platform.rect.x += shift_x
- 
+        
+    def scrolling(self, shift_x):#scrolling 
+        self.monde_scrolling += shift_x
+        for platform in self.platform_list:#pour toutes les platformes
+            platform.rect.x += shift_x#on les déplacent
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
 
@@ -183,11 +176,10 @@ while continuer:
         if selected==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
 
-
-        # Main Menu Text
         ecran.blit(fond, (0,0))
         ecran.blit(perso,(860,237))
         pygame.display.update()
+        
     while credit:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -197,6 +189,7 @@ while continuer:
                     menu=True
         ecran.blit(bg,(0,0))
         pygame.display.update()
+        
     while jeu:  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -222,17 +215,18 @@ while continuer:
                     sonjump.stop()
         active_sprite_list.update()
         current_level.update()
+        
         if joueur.rect.right >= 500:
             diff = joueur.rect.right - 500
             joueur.rect.right = 500
-            current_level.shift_world(-diff)
+            current_level.scrolling(-diff)
             
         if joueur.rect.left <= 120:
             diff = 120 - joueur.rect.left
             joueur.rect.left = 120
-            current_level.shift_world(diff)
+            current_level.scrolling(diff)
  
-        current_position = joueur.rect.x + current_level.world_shift
+        current_position = joueur.rect.x + current_level.monde_scrolling
         if current_position < current_level.level_limit:
             joueur.rect.x = 120
             if current_level_no < len(level_list)-1:
