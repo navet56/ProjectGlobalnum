@@ -6,11 +6,11 @@ from pygame.locals import *
 ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 bgcredit = pygame.image.load("bkgcredits.png")
-pygame.mixer.init(44100, -16,2,2048)
+pygame.mixer.init(44100, -16,2,2048)#on initialise mixer (frequence du son, nombre de bits, etc)
 musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
-fond = pygame.image.load("bkgmenu.png")
+fondmenu = pygame.image.load("bkgmenu.png")
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -83,13 +83,12 @@ class Platform(pygame.sprite.Sprite):
 
 class Level(object):#Classe Niveau en general
     bg = pygame.image.load("background.png")
-
     def __init__(self, joueur):
-
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
         self.monde_scrolling = 0
+        
     def update(self):
         self.platform_list.update()
         self.enemy_list.update()
@@ -107,7 +106,6 @@ class Level(object):#Classe Niveau en general
             enemy.rect.x += shift_x
 
 class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
-
     def __init__(self, joueur):
         """ Creattion du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
@@ -185,8 +183,8 @@ while continuer:
             perso = pygame.image.load("persomenu2.png").convert_alpha()
         if curseur==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
-
-        ecran.blit(fond, (0,0))
+        #Affichage et mise à jour des élements de l'écran
+        ecran.blit(fondmenu, (0,0))
         ecran.blit(perso,(760,237))
         pygame.display.update()
     #Boucle credits    
