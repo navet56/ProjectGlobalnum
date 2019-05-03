@@ -64,7 +64,6 @@ class Joueur(pygame.sprite.Sprite):
  
     def jump(self):
         #Permet le saut
-
         #Vérifie s'il y a une collision à 2 pixels au dessus
         self.rect.y += 2
         platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
@@ -74,10 +73,10 @@ class Joueur(pygame.sprite.Sprite):
             sonjump.play()
             self.change_y = -10#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
 
-    def go_left(self):
+    def deplacement_gauche(self):
         self.change_x = -6 #on déplace le sprite de 6 pixels
  
-    def go_right(self):
+    def deplacement_droit(self):
         self.change_x = 6#on déplace le sprite de 6 pixels
  
     def stop(self):
@@ -96,7 +95,7 @@ class Level(object):#Classe Niveau en general
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
-        self.monde_scrolling = 0
+        self.monde_scrolling = 0#on définit le scrolling comme étant nul de base
         
     def update(self):
         self.platform_list.update()
@@ -157,7 +156,7 @@ while continuer:
     credit=False#de meme avec l'écran des crédits
     curseur=1#on défini curseur sur le bouton "Joueur" de base
     #Boucle menu
-    while menu:
+    while menu:#tant que menu=True
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 pygame.quit()
@@ -214,9 +213,9 @@ while continuer:
                 jeu = False
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
-                    joueur.go_left()
+                    joueur.deplacement_gauche()
                 if event.key == pygame.K_RIGHT:#etc
-                    joueur.go_right()
+                    joueur.deplacement_droit()
                 if event.key == pygame.K_UP:
                     joueur.jump()
                 if event.key == pygame.K_ESCAPE:
@@ -232,33 +231,33 @@ while continuer:
         #mise à jour des élements
         active_sprite_list.update()
         current_level.update()
-        
+
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
             diff = joueur.rect.right - 500#diference entre la position du joueur et 500 px
             joueur.rect.right = 500
             current_level.scrolling(-diff)
-            
+
         if joueur.rect.left <= 120:#pareil l'autre coté
             diff = 120 - joueur.rect.left
             joueur.rect.left = 120
             current_level.scrolling(diff)
  
         current_position = joueur.rect.x + current_level.monde_scrolling
-        if current_position < current_level.level_limit:
-            joueur.rect.x = 120
+        if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
+            joueur.rect.x = 120#le joueur se place en x = 120 px
             if current_level_no < len(level_list)-1:
                 current_level_no += 1
                 current_level = level_list[current_level_no]
                 joueur.level = current_level
-                
-        if joueur.rect.left == ECRAN_HAUTEUR:
+
+        if joueur.rect.left == ECRAN_HAUTEUR:#Test game over
             jeu=False
-            credit=True
+            credit=True#game over provisoire
         if joueur.rect.left < 0:
             joueur.rect.left = 0
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
-        #pygame.time.Clock().tick(60)#vitesse du jeu en fps
+        #pygame.time.Clock().tick(60)#vitesse du jeu
         pygame.display.flip()
         pygame.display.update()
 pygame.quit()
