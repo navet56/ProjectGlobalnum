@@ -1,4 +1,13 @@
 #coding:utf-8
+
+#    Je veux rentrer !
+#    Programme sous license GPL v3
+#    Python 3
+#    Pygame 1.9
+#    Par :
+#    Mael Le Boulicaut et Evan Diberder
+#    v0.5 
+
 import pygame
 from pygame.locals import *
 
@@ -28,19 +37,19 @@ class Joueur(pygame.sprite.Sprite):
         #Met à jour le joueur
         self.grav()
         self.rect.x += self.change_x
-        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
-        for block in block_hit_list:
+        bloc_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        for bloc in bloc_hit_list:
             if self.change_x > 0:
-                self.rect.right = block.rect.left
+                self.rect.right = bloc.rect.left
             elif self.change_x < 0:
-                self.rect.left = block.rect.right
+                self.rect.left = bloc.rect.right
         self.rect.y += self.change_y
-        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
-        for block in block_hit_list:
+        bloc_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        for bloc in bloc_hit_list:
             if self.change_y > 0:
-                self.rect.bottom = block.rect.top
+                self.rect.bottom = bloc.rect.top
             elif self.change_y < 0:
-                self.rect.top = block.rect.bottom
+                self.rect.top = bloc.rect.bottom
             self.change_y = 0
  
     def grav(self):
@@ -115,7 +124,7 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
                  [100, 30, 400, 700],#[longueur, largeur, x, y]
                  [100, 30, 500, 500],
                  [100, 30, 750, 400],
-                 [100, 30, 100, 300],
+                 [100, 30, 1000, 300],
                  ]
 
         for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
@@ -128,7 +137,7 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
 #Programme principale
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
-pygame.display.set_caption("Global Num")
+pygame.display.set_caption("Je veux rentrer !")
 joueur = Joueur() #permet d'ecrire la classe Joueur() comme une variable
 level_list = []#on définit la liste vide level_list
 level_list.append( Level_01(joueur) )#on ajoute le niveau 1
@@ -220,6 +229,7 @@ while continuer:
                     joueur.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
                     joueur.stop()
+        #mise à jour des élements
         active_sprite_list.update()
         current_level.update()
         
@@ -248,7 +258,7 @@ while continuer:
             joueur.rect.left = 0
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
-        pygame.time.Clock().tick(60)#vitesse du jeu en fps
+        #pygame.time.Clock().tick(60)#vitesse du jeu en fps
         pygame.display.flip()
         pygame.display.update()
 pygame.quit()
