@@ -2,6 +2,7 @@
 import pygame
 from pygame.locals import *
 
+#Constantes
 ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 bgcredit = pygame.image.load("bkgcredits.png")
@@ -11,6 +12,7 @@ sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fond = pygame.image.load("bkgmenu.png")
 
+#Classes
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):#Constructeur
         super().__init__() #Appelle le constructeur de la classe mère
@@ -112,40 +114,42 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
         self.level_limit = -1000
 
         level = [[100, 30, 100, 600],#plateformes du niveau
-                 [100, 30, 400, 700],
+                 [100, 30, 400, 700],#[longueur, largeur, x, y]
                  [100, 30, 500, 500],
                  [100, 30, 750, 400],
+                 [100, 30, 100, 300],
                  ]
 
-        for platform in level:
-            block = Platform(platform[0], platform[1])
-            block.rect.x = platform[2]
-            block.rect.y = platform[3]
-            block.joueur = self.joueur
-            self.platform_list.add(block)
+        for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
+            bloc = Platform(platform[0], platform[1])#bloc est de longueur et largeur par exemple 100,30
+            bloc.rect.x = platform[2]#la plateforme se situe en x = 400 par ex
+            bloc.rect.y = platform[3]#pareil pour y
+            bloc.joueur = self.joueur
+            self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
 
-#Boucle principale
+#Programme principale
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Global Num")
-joueur = Joueur()
-level_list = []
-level_list.append( Level_01(joueur) )
+joueur = Joueur() #permet d'ecrire la classe Joueur() comme une variable
+level_list = []#on définit la liste vide level_list
+level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
 current_level = level_list[current_level_no]
-active_sprite_list = pygame.sprite.Group()
+active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
 joueur.rect.x = 340
 joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
 joueur.level = current_level
-active_sprite_list.add(joueur)
-continuer = 1
-pygame.mixer.music.play(loops=-1)
-clock = pygame.time.Clock()
+active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
+continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
+pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
 
+#Boucle principale
 while continuer:
-    menu=True
-    credit=False
-    selected=1
+    menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
+    credit=False#de meme avec l'écran des crédits
+    curseur=1#on défini curseur sur le bouton "Joueur" de base
+    #Boucle menu
     while menu:
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -153,38 +157,39 @@ while continuer:
                 quit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_UP:
-                    selected=selected-1
-                    if selected==0:
-                        selected=1
+                    curseur=curseur-1
+                    if curseur==0:
+                    #si curseur va en dessous de 1, on le remet à 1, cela permet que curseur ne peut avoir que 3 valeurs
+                        curseur=1
                 elif event.key==pygame.K_DOWN:
-                    selected=selected+1
-                    if selected==4:
-                        selected=3
+                    curseur=curseur+1
+                    if curseur==4:
+                        curseur=3
                 if event.key==pygame.K_RETURN:
-                    if selected==1:
+                    if curseur==1:
                         pygame.mixer.music.stop()
                         jeu=True
                         menu=False
                         musique = pygame.mixer.music.load("level1.ogg")
                         pygame.mixer.music.play(loops=-1)
-                    if selected==2:
+                    if curseur==2:
                         menu = False
                         credit = True
-                    if selected==3:
+                    if curseur==3:
                         pygame.quit()
                         quit()
-
-        if selected==1:
+        #Animation de la main de curseur
+        if curseur==1:
             perso = pygame.image.load("persomenu1.png").convert_alpha()
-        if selected==2:
+        if curseur==2:
             perso = pygame.image.load("persomenu2.png").convert_alpha()
-        if selected==3:
+        if curseur==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
 
         ecran.blit(fond, (0,0))
         ecran.blit(perso,(760,237))
         pygame.display.update()
-        
+    #Boucle credits    
     while credit:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -194,7 +199,7 @@ while continuer:
                     menu=True
         ecran.blit(bgcredit,(0,0))
         pygame.display.update()
-        
+    #Boucle jeu
     while jeu:  
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -221,7 +226,7 @@ while continuer:
         current_level.update()
         
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
-            diff = joueur.rect.right - 500
+            diff = joueur.rect.right - 500#diference entre la position du joueur et 500 px
             joueur.rect.right = 500
             current_level.scrolling(-diff)
             
@@ -237,15 +242,15 @@ while continuer:
                 current_level_no += 1
                 current_level = level_list[current_level_no]
                 joueur.level = current_level
+                
         if joueur.rect.left == ECRAN_HAUTEUR:
-            print("alerte bas")
             jeu=False
             credit=True
         if joueur.rect.left < 0:
             joueur.rect.left = 0
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
-        clock.tick(60)
+        pygame.time.Clock().tick(60)#vitesse du jeu en fps
         pygame.display.flip()
         pygame.display.update()
 pygame.quit()
