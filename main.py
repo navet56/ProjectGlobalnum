@@ -1,3 +1,5 @@
+
+
 #coding:utf-8
 
 #    Je veux rentrer !
@@ -20,6 +22,7 @@ musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
+
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -81,7 +84,28 @@ class Joueur(pygame.sprite.Sprite):
  
     def stop(self):
         self.change_x = 0 #on force l'arret
- 
+
+class Projectile(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("canette.png")
+        self.rect = self.image.get_rect()
+        
+
+        
+    
+    def update(self):
+        if tir == False:
+            projectile_list.draw(ecran)
+            
+        else:
+            projectile_list.draw(ecran)
+            projectile.rect.x += 6
+            if self.rect.x > 600:
+                self.rect.y = 4000
+            
+        
+        
 class Platform(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
         super().__init__()
@@ -137,7 +161,9 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
-joueur = Joueur() #permet d'ecrire la classe Joueur() comme une variable
+joueur = Joueur()#permet d'ecrire la classe Joueur() comme une variable
+projectile = Projectile()
+projectile_list = pygame.sprite.Group()
 level_list = []#on définit la liste vide level_list
 level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
@@ -145,8 +171,11 @@ current_level = level_list[current_level_no]
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
 joueur.rect.x = 340
 joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
+projectile.rect.x = joueur.rect.x
+projectile.rect.y = joueur.rect.y
 joueur.level = current_level
 active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
+projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
 pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
 
@@ -155,6 +184,7 @@ while continuer:
     menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
     credit=False#de meme avec l'écran des crédits
     curseur=1#on défini curseur sur le bouton "Joueur" de base
+    tir = False
     #Boucle menu
     while menu:#tant que menu=True
         for event in pygame.event.get():
@@ -218,6 +248,8 @@ while continuer:
                     joueur.deplacement_droit()
                 if event.key == pygame.K_UP:
                     joueur.jump()
+                if event.key == pygame.K_SPACE:
+                   tir = True
                 if event.key == pygame.K_ESCAPE:
                     musique = pygame.mixer.music.load("menu.ogg")
                     pygame.mixer.music.play(loops=-1)
@@ -257,7 +289,11 @@ while continuer:
             joueur.rect.left = 0
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
+        if tir == True:
+          projectile.update()
         #pygame.time.Clock().tick(60)#vitesse du jeu
         pygame.display.flip()
         pygame.display.update()
 pygame.quit()
+
+
