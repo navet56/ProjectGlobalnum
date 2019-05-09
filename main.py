@@ -7,7 +7,7 @@
 #    Pygame 1.9
 #    Par :
 #    Mael Le Boulicaut et Evan Diberder
-#    v0.5 
+#    v0.6
 
 import pygame
 from pygame.locals import *
@@ -91,12 +91,12 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.tir = False
     def update(self):
-        if self.tir == False:
-            projectile_list.draw(ecran)
-            projectile.rect.x += 6
         if self.tir == True:
             projectile_list.draw(ecran)
-            projectile.rect.x += 6
+            if gauche == False:
+                projectile.rect.x += 6
+            else:
+                projectile.rect.x -= 6
             if self.rect.x > 600:
                 self.rect.x = joueur.rect.x
                 self.tir = False
@@ -135,7 +135,7 @@ class Level(object):#Classe Niveau en general
 
 class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
     def __init__(self, joueur):
-        """ Creattion du level 1. """
+        """ Creation du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
         self.level_limit = -1000
 
@@ -172,6 +172,7 @@ active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
 projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
 pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
+gauche=False
 #Boucle principale
 while continuer:
     menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
@@ -230,8 +231,8 @@ while continuer:
     #Boucle jeu
     while jeu:
         if projectile.tir == False:
-            projectile.rect.x = joueur.rect.x
-            projectile.rect.y = joueur.rect.y + 65
+            projectile.rect.x = joueur.rect.x + 10
+            projectile.rect.y = joueur.rect.y + 60
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 continuer = False
@@ -239,8 +240,12 @@ while continuer:
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
                     joueur.deplacement_gauche()
+                    joueur.image = pygame.image.load("persocorentin2.png") 
+                    gauche = True
                 if event.key == pygame.K_RIGHT:#etc
                     joueur.deplacement_droit()
+                    joueur.image = pygame.image.load("persocorentin.png")
+                    gauche = False
                 if event.key == pygame.K_UP:
                     joueur.jump()
                 if event.key == pygame.K_SPACE:
@@ -285,13 +290,8 @@ while continuer:
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
         if projectile.tir == True:
-          projectile.update()
-        else:
-          projectile.rect.x = joueur.rect.x
-          projectile.rect.y = joueur.rect.y + 65
-        #pygame.time.Clock().tick(60)#vitesse du jeu
+            projectile.update()
+        pygame.time.Clock().tick(60)#vitesse du jeu
         pygame.display.flip()
         pygame.display.update()
 pygame.quit()
-
-
