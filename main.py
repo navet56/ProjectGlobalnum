@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 13f5189882f6af43bdbfbe397bdb42176a30c6f3
 #coding:utf-8
 
 #    Je veux rentrer !
@@ -96,10 +101,15 @@ class Projectile(pygame.sprite.Sprite):
                 projectile.rect.x += 6
             else:
                 projectile.rect.x -= 6
+            if event.key == pygame.K_LEFT:
+                self.rect.x = joueur.rect.x- self.rect.x - self.rect.x
+            if event.key == pygame.K_RIGHT:
+                self.rect.x = joueur.rect.x- self.rect.x - self.rect.x
             if self.rect.x > 600:
                 self.rect.x = joueur.rect.x
                 self.tir = False
-                
+            
+                    
                 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
@@ -294,3 +304,4 @@ while continuer:
         pygame.display.flip()
         pygame.display.update()
 pygame.quit()
+
