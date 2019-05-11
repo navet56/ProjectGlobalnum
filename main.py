@@ -103,8 +103,10 @@ class Projectile(pygame.sprite.Sprite):
                 projectile.rect.x -= 6
             if event.key == pygame.K_LEFT:
                 self.rect.x = joueur.rect.x- self.rect.x - self.rect.x
+                self.tir = False
             if event.key == pygame.K_RIGHT:
                 self.rect.x = joueur.rect.x- self.rect.x - self.rect.x
+                self.tir = False
             if self.rect.x > 600:
                 self.rect.x = joueur.rect.x
                 self.tir = False
