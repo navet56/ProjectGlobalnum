@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 13f5189882f6af43bdbfbe397bdb42176a30c6f3
 #coding:utf-8
 
 #    Je veux rentrer !
