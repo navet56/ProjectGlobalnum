@@ -1,4 +1,3 @@
-
 #coding:utf-8
 
 #    Je veux rentrer !
@@ -231,8 +230,8 @@ while continuer:
     #Boucle jeu
     while jeu:
         if projectile.tir == False:
-            projectile.rect.x = joueur.rect.x + 10
-            projectile.rect.y = joueur.rect.y + 60
+            projectile.rect.x = joueur.rect.x + 30
+            projectile.rect.y = joueur.rect.y + 40
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 continuer = False
