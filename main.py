@@ -72,7 +72,7 @@ class Joueur(pygame.sprite.Sprite):
         #Effectue le saut
         if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
             sonjump.play()
-            self.change_y = -10#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
+            self.change_y = -13#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
 
     def deplacement_gauche(self):
         self.change_x = -6 #on déplace le sprite de 6 pixels
@@ -91,12 +91,14 @@ class Projectile(pygame.sprite.Sprite):
         self.tir = False
     def update(self):
         if self.tir == True:
+            projectile.rect.x = joueur.rect.x + 30
+            projectile.rect.y = joueur.rect.y + 40
             projectile_list.draw(ecran)
             if gauche == False:
                 projectile.rect.x += 6
             else:
                 projectile.rect.x -= 6
-            if event.key == pygame.K_LEFT:
+            """if event.key == pygame.K_LEFT:
                 self.rect.x = joueur.rect.x- self.rect.x - self.rect.x
                 self.tir = False
             if event.key == pygame.K_RIGHT:
@@ -104,9 +106,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.tir = False
             if self.rect.x > 600:
                 self.rect.x = joueur.rect.x
-                self.tir = False
-            
-                    
+                self.tir = False"""
                 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
@@ -145,11 +145,12 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
         self.level_limit = -1000
 
-        level = [[100, 30, 100, 600],#plateformes du niveau
-                 [100, 30, 400, 700],#[longueur, largeur, x, y]
-                 [100, 30, 500, 500],
-                 [100, 30, 750, 400],
-                 [100, 30, 1000, 300],
+
+        level = [[100, 2, 20, 630],#plateformes du niveau
+                 [100, 2, 250, 510],#[longueur, largeur, x, y]
+                 [200, 2, 420, 338],
+                 [300, 2, 780, 150],
+                 [273, 2, 1, 100],
                  ]
 
         for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
@@ -236,9 +237,6 @@ while continuer:
         pygame.display.update()
     #Boucle jeu
     while jeu:
-        if projectile.tir == False:
-            projectile.rect.x = joueur.rect.x + 30
-            projectile.rect.y = joueur.rect.y + 40
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 continuer = False
