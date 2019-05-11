@@ -58,7 +58,7 @@ class Joueur(pygame.sprite.Sprite):
         if self.change_y == 0: #Si le sprite ne bouge plus
             self.change_y = 1 #Le faire bouger de 1 px
         else:
-            self.change_y += .35 #sinon le faire bouger de 0.35 px
+            self.change_y += .4 #sinon le faire bouger de 0.35 px
         if self.rect.y >= ECRAN_HAUTEUR - self.rect.height and self.change_y >= 0: #Si le sprite est en bas de l'ecran moins la hauteur du sprite car sinon ce serait en dessous
             self.change_y = 0 #on stoppe le sprite
             self.rect.y = ECRAN_HAUTEUR - self.rect.height #on met le sprite tout en bas
@@ -72,7 +72,7 @@ class Joueur(pygame.sprite.Sprite):
         #Effectue le saut
         if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
             sonjump.play()
-            self.change_y = -13#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
+            self.change_y = -14#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
 
     def deplacement_gauche(self):
         self.change_x = -6 #on déplace le sprite de 6 pixels
@@ -90,9 +90,9 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.tir = False
     def update(self):
+        projectile.rect.x = joueur.rect.x + 30
+        projectile.rect.y = joueur.rect.y + 40
         if self.tir == True:
-            projectile.rect.x = joueur.rect.x + 30
-            projectile.rect.y = joueur.rect.y + 40
             projectile_list.draw(ecran)
             if gauche == False:
                 projectile.rect.x += 6
@@ -267,7 +267,9 @@ while continuer:
         #mise à jour des élements
         active_sprite_list.update()
         current_level.update()
-
+        if projectile.tir == False :
+            projectile.rect.x = joueur.rect.x + 30
+            projectile.rect.y = joueur.rect.y + 40
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
             diff = joueur.rect.right - 500#diference entre la position du joueur et 500 px
             joueur.rect.right = 500
