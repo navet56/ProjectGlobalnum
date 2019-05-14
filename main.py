@@ -20,7 +20,7 @@ musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
-
+bggameover = pygame.image.load("bkgameover.png")
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -152,7 +152,9 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
             bloc.joueur = self.joueur
             self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
 
-#Programme principale
+#Programme principale        if joueur.rect.y > ECRAN_HAUTEUR-102:#Test game over
+            gameover=True#game over provisoire
+            jeu=False
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
@@ -164,18 +166,19 @@ level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
 current_level = level_list[current_level_no]
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
-joueur.rect.x = 340
-joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
+joueur.rect.x = 50
+joueur.rect.y = ECRAN_HAUTEUR - 200
 joueur.level = current_level
 active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
 projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
 pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
 gauche=False
+menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
+credit=False#de meme avec l'écran des crédits
+gameover=False
 #Boucle principale
 while continuer:
-    menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
-    credit=False#de meme avec l'écran des crédits
     curseur=1#on défini curseur sur le bouton "Joueur" de base
     #Boucle menu
     while menu:#tant que menu=True
@@ -227,6 +230,15 @@ while continuer:
                     menu=True
         ecran.blit(bgcredit,(0,0))
         pygame.display.update()
+    while gameover:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    gameover=False
+                    jeu=False
+                    menu=True
+            ecran.blit(bggameover,(0,0))
+            pygame.display.update()
     #Boucle jeu
     while jeu:
         for event in pygame.event.get():
@@ -261,7 +273,6 @@ while continuer:
         active_sprite_list.update()
         current_level.update()
         if projectile.tir == False :
-            print('aaoa')
             projectile.rect.x = joueur.rect.x + 30
             projectile.rect.y = joueur.rect.y + 40
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
@@ -282,9 +293,9 @@ while continuer:
                 current_level = level_list[current_level_no]
                 joueur.level = current_level
 
-        if joueur.rect.left == ECRAN_HAUTEUR:#Test game over
+        if joueur.rect.y > ECRAN_HAUTEUR-102:#Test game over
+            gameover=True#game over provisoire
             jeu=False
-            credit=True#game over provisoire
         if joueur.rect.left < 0:
             joueur.rect.left = 0
         current_level.draw(ecran)
