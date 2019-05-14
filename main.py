@@ -20,7 +20,7 @@ musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
-
+bggameover = pygame.image.load("bkgameover.png")
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -172,18 +172,19 @@ level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
 current_level = level_list[current_level_no]
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
-joueur.rect.x = 340
-joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
+joueur.rect.x = 50
+joueur.rect.y = ECRAN_HAUTEUR - 200
 joueur.level = current_level
 active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
 projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
 pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
 gauche=False
+menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
+credit=False#de meme avec l'écran des crédits
+gameover=False
 #Boucle principale
 while continuer:
-    menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
-    credit=False#de meme avec l'écran des crédits
     curseur=1#on défini curseur sur le bouton "Joueur" de base
     #Boucle menu
     while menu:#tant que menu=True
@@ -217,7 +218,7 @@ while continuer:
         #Animation de la main de curseur
         if curseur==1:
             perso = pygame.image.load("persomenu1.png").convert_alpha()
-        if curseur==2:
+        if curseur==2:    
             perso = pygame.image.load("persomenu2.png").convert_alpha()
         if curseur==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
@@ -244,7 +245,7 @@ while continuer:
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
                     joueur.deplacement_gauche()
-                    joueur.image = pygame.image.load("persocorentin2.png") 
+                    joueur.image = pygame.image.loadreditnt      ("persocorentin2.png") 
                     gauche = True
                 if event.key == pygame.K_RIGHT:#etc
                     joueur.deplacement_droit()
@@ -264,6 +265,15 @@ while continuer:
                     joueur.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
                     joueur.stop()
+        while gameover:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        gameover=False
+                        jeu=False
+                        menu=True
+            ecran.blit(bggameover,(0,0))
+            pygame.display.update()
         #mise à jour des élements
         active_sprite_list.update()
         current_level.update()
@@ -288,14 +298,18 @@ while continuer:
                 current_level = level_list[current_level_no]
                 joueur.level = current_level
 
-        if joueur.rect.left == ECRAN_HAUTEUR:#Test game over
+        if joueur.rect.y > ECRAN_HAUTEUR-102:#Test game over
             jeu=False
             credit=True#game over provisoire
+            joueur.rect.x = 50
+            joueur.rect.y = 200
+            Level.monde_scrolling = 0
         if joueur.rect.left < 0:
             joueur.rect.left = 0
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
         if projectile.tir == True:
+            menu=False
             projectile.update()
         pygame.time.Clock().tick(60)#vitesse du jeu
         pygame.display.flip()
