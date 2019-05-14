@@ -20,7 +20,7 @@ musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
-bggameover = pygame.image.load("bkgameover.png")
+
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -90,23 +90,15 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.tir = False
     def update(self):
-        projectile.rect.x = joueur.rect.x + 30
-        projectile.rect.y = joueur.rect.y + 40
+        projectile_list.draw(ecran)
         if self.tir == True:
-            projectile_list.draw(ecran)
-            if gauche == False:
-                projectile.rect.x += 6
-            else:
-                projectile.rect.x -= 6
-            """if event.key == pygame.K_LEFT:
-                self.rect.x = joueur.rect.x- self.rect.x - self.rect.x
-                self.tir = False
-            if event.key == pygame.K_RIGHT:
-                self.rect.x = joueur.rect.x- self.rect.x - self.rect.x
-                self.tir = False
-            if self.rect.x > 600:
-                self.rect.x = joueur.rect.x
-                self.tir = False"""
+            self.rect.x += 6
+        if self.rect.x > 600:
+            self.rect.y += 6
+        if self.rect.y >= 720:
+            self.rect.x = joueur.rect.x + 30
+            self.rect.y = joueur.rect.y + 40
+            self.tir = False
                 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
@@ -172,19 +164,18 @@ level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
 current_level = level_list[current_level_no]
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
-joueur.rect.x = 50
-joueur.rect.y = ECRAN_HAUTEUR - 200
+joueur.rect.x = 340
+joueur.rect.y = ECRAN_HAUTEUR - joueur.rect.height
 joueur.level = current_level
 active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
 projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
 pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
 gauche=False
-menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
-credit=False#de meme avec l'écran des crédits
-gameover=False
 #Boucle principale
 while continuer:
+    menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
+    credit=False#de meme avec l'écran des crédits
     curseur=1#on défini curseur sur le bouton "Joueur" de base
     #Boucle menu
     while menu:#tant que menu=True
@@ -218,7 +209,7 @@ while continuer:
         #Animation de la main de curseur
         if curseur==1:
             perso = pygame.image.load("persomenu1.png").convert_alpha()
-        if curseur==2:    
+        if curseur==2:
             perso = pygame.image.load("persomenu2.png").convert_alpha()
         if curseur==3:
             perso = pygame.image.load("persomenu3.png").convert_alpha()
@@ -245,7 +236,7 @@ while continuer:
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
                     joueur.deplacement_gauche()
-                    joueur.image = pygame.image.loadreditnt      ("persocorentin2.png") 
+                    joueur.image = pygame.image.load("persocorentin2.png") 
                     gauche = True
                 if event.key == pygame.K_RIGHT:#etc
                     joueur.deplacement_droit()
@@ -254,7 +245,8 @@ while continuer:
                 if event.key == pygame.K_UP:
                     joueur.jump()
                 if event.key == pygame.K_SPACE:
-                   projectile.tir = True
+                    projectile.update()
+                    projectile.tir = True
                 if event.key == pygame.K_ESCAPE:
                     musique = pygame.mixer.music.load("menu.ogg")
                     pygame.mixer.music.play(loops=-1)
@@ -265,19 +257,11 @@ while continuer:
                     joueur.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
                     joueur.stop()
-        while gameover:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        gameover=False
-                        jeu=False
-                        menu=True
-            ecran.blit(bggameover,(0,0))
-            pygame.display.update()
         #mise à jour des élements
         active_sprite_list.update()
         current_level.update()
         if projectile.tir == False :
+            print('aaoa')
             projectile.rect.x = joueur.rect.x + 30
             projectile.rect.y = joueur.rect.y + 40
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
@@ -298,21 +282,19 @@ while continuer:
                 current_level = level_list[current_level_no]
                 joueur.level = current_level
 
-        if joueur.rect.y > ECRAN_HAUTEUR-102:#Test game over
+        if joueur.rect.left == ECRAN_HAUTEUR:#Test game over
             jeu=False
             credit=True#game over provisoire
-            joueur.rect.x = 50
-            joueur.rect.y = 200
-            Level.monde_scrolling = 0
         if joueur.rect.left < 0:
             joueur.rect.left = 0
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
         if projectile.tir == True:
-            menu=False
             projectile.update()
         pygame.time.Clock().tick(60)#vitesse du jeu
         pygame.display.flip()
         pygame.display.update()
 pygame.quit()
+
+
 
