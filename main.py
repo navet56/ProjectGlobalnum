@@ -6,7 +6,7 @@
 #    Pygame 1.9
 #    Par :
 #    Mael Le Boulicaut et Evan Diberder
-#    v0.6
+#    v1.0
 
 import pygame
 from pygame.locals import *
@@ -25,7 +25,7 @@ bggameover = pygame.image.load("bkgameover.png")
 #Classes
 class Joueur(pygame.sprite.Sprite):
     def __init__(self):#Constructeur
-        super().__init__() #Appelle le constructeur de la classe mère
+        super().__init__()
         longueur = 60
         hauteur = 100
         self.image = pygame.image.load("persocorentin.png")
@@ -152,9 +152,7 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
             bloc.joueur = self.joueur
             self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
 
-#Programme principale        if joueur.rect.y > ECRAN_HAUTEUR-102:#Test game over
-            gameover=True#game over provisoire
-            jeu=False
+#Programme principale        
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
