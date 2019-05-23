@@ -24,6 +24,11 @@ bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#
 bg = pygame.image.load("background.png")
 
+#Variables
+position="Droite"
+menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
+credit=False#de meme avec l'écran des crédits et gameover
+gameover=False
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -210,12 +215,6 @@ projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
 pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
 
-#Variables
-position="Droite"
-menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
-credit=False#de meme avec l'écran des crédits et gameover
-gameover=False
-
 #Boucle principale
 while continuer:
     curseur=1#on défini curseur sur le bouton "Joueur" de base
@@ -279,7 +278,9 @@ while continuer:
                     menu=True
         ecran.blit(bggameover,(0,0))
         pygame.display.update()
-        current_level.resetJeu()
+        musique = pygame.mixer.music.load("menu.ogg")
+    current_level.resetJeu()
+    pygame.mixer.music.play(loops=-1)
     #Boucle jeu
     while jeu:
         #Evenements au clavier
