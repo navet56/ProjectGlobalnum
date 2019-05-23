@@ -21,7 +21,7 @@ sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
 bggameover = pygame.image.load("bkgameover.png")
-defaultJoueurPosition = pygame.Rect(50, ECRAN_HAUTEUR - 200, 60, 100)
+defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#
 bg = pygame.image.load("background.png")
 
 
@@ -108,8 +108,7 @@ class Projectile(pygame.sprite.Sprite):
             self.tir = False
 
 
-class Platform(pygame.sprite.Sprite):
-
+class Plateforme(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
         super().__init__()
         self.image = pygame.Surface([longueur, hauteur])
@@ -138,7 +137,11 @@ class Level(object):#Classe Niveau en general
         for enemy in self.enemy_list:
             enemy.rect.x -= self.monde_scrolling
         self.monde_scrolling = 0
-
+    def resetJeu(self): 
+        joueur.stop()
+        current_level.resetScrolling()
+        joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
+        bg = pygame.image.load("background.png")
     def scrolling(self, shift_x):#scrolling 
         self.monde_scrolling += shift_x
         for platform in self.platform_list:#pour toutes les platformes
@@ -276,10 +279,7 @@ while continuer:
                     menu=True
         ecran.blit(bggameover,(0,0))
         pygame.display.update()
-    if joueur.rect != defaultJoueurPosition:
-        joueur.stop()
-        current_level.resetScrolling()
-        joueur.rect = copy.deepcopy(defaultJoueurPosition)
+        current_level.resetJeu()
     #Boucle jeu
     while jeu:
         #Evenements au clavier
@@ -330,16 +330,11 @@ while continuer:
             joueur.rect.left = 120
             current_level.scrolling(diff)
 
-        current_position = joueur.rect.x + current_level.monde_scrolling
+        current_position = joueur.rect.x + current_level.monde_scrolling#on definit une variable qui montre la position du joueur virtuellement
 
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
             joueur.rect.x = 120#le joueur se place en x = 120 px
             bg = pygame.image.load("bkgcredits.png")
-            if current_level_no < len(level_list)-1:#si il y a plus de niveaux que current_level_no
-                bg = pygame.image.load("bkgcredits.png")
-                current_level_no += 1#on augmente current_level_no de 1
-                current_level = level_list[current_level_no]#on reset la liste des niveaux, avec le nouveau current_level_no
-                joueur.level = current_level
 
         if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
             gameover=True
