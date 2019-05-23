@@ -1,7 +1,6 @@
 #coding:utf-8
 
 #    Je veux rentrer !
-#    Programme sous license GPL v3
 #    Python 3
 #    Pygame 1.9
 #    Par :
@@ -23,6 +22,8 @@ perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
 bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = pygame.Rect(50, ECRAN_HAUTEUR - 200, 60, 100)
+bg = pygame.image.load("background.png")
+
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -71,6 +72,7 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.y += 2
         platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         self.rect.y -= 2
+        
         #Effectue le saut
         if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
             sonjump.play()
@@ -94,23 +96,27 @@ class Projectile(pygame.sprite.Sprite):
     def update(self):
         projectile_list.draw(ecran)
         if self.tir == True:
-            self.rect.x += 6
+            if position=="Droite":
+                self.rect.x += 6
+            else:
+                self.rect.x -= 6
         if self.rect.x > 600:
             self.rect.y += 6
-        if self.rect.y >= 720:
+        if self.rect.y >= 720 or self.rect.x <= 0:
             self.rect.x = joueur.rect.x + 30
             self.rect.y = joueur.rect.y + 40
             self.tir = False
 
+
 class Platform(pygame.sprite.Sprite):
+
     def __init__(self, longueur, hauteur):
         super().__init__()
         self.image = pygame.Surface([longueur, hauteur])
-        self.image.fill((0,100,50))
+        self.image.fill((255,100,50))#Couleur des plateformes (RVB)
         self.rect = self.image.get_rect()
 
 class Level(object):#Classe Niveau en general
-    bg = pygame.image.load("background.png")
     def __init__(self, joueur):
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
@@ -122,7 +128,7 @@ class Level(object):#Classe Niveau en general
         self.enemy_list.update()
 
     def draw(self, ecran):
-        ecran.blit(self.bg,(self.monde_scrolling // 1,0))
+        ecran.blit(bg,(self.monde_scrolling // 1,0))
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
 
@@ -146,6 +152,27 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
         self.level_limit = -1000
 
+        level = [[100, 2, 20, 630],#plateformes du niveau
+                 [100, 2, 250, 510],#[longueur, largeur, x, y]
+                 [200, 2, 420, 338],
+                 [300, 2, 780, 150],
+                 [273, 2, 1, 100],
+                 [50, 2, 1300, 300],
+                 [100, 2, 1500, 600],
+                 ]
+        
+        for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
+             bloc = Plateforme(platform[0], platform[1])#bloc est de longueur et largeur par exemple 100,30
+             bloc.rect.x = platform[2]#la plateforme se situe en x = 400 par ex
+             bloc.rect.y = platform[3]#pareil pour y
+             bloc.joueur = self.joueur
+             self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
+        
+class Level_02(Level): #Classe Level 2
+    def __init__(self, joueur):
+        """ Creation du level 1. """
+        super().__init__(joueur)#On ajout les variables du init de Level dans cet init
+        self.level_limit = -1000
 
         level = [[100, 2, 20, 630],#plateformes du niveau
                  [100, 2, 250, 510],#[longueur, largeur, x, y]
@@ -153,15 +180,15 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
                  [300, 2, 780, 150],
                  [273, 2, 1, 100],
                  ]
-
+        
         for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
-            bloc = Platform(platform[0], platform[1])#bloc est de longueur et largeur par exemple 100,30
-            bloc.rect.x = platform[2]#la plateforme se situe en x = 400 par ex
-            bloc.rect.y = platform[3]#pareil pour y
-            bloc.joueur = self.joueur
-            self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
-
-#Programme principale        
+             bloc = Plateforme(platform[0], platform[1])#bloc est de longueur et largeur par exemple 100,30
+             bloc.rect.x = platform[2]#la plateforme se situe en x = 400 par ex
+             bloc.rect.y = platform[3]#pareil pour y
+             bloc.joueur = self.joueur
+             self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
+        
+#Programme principal       
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
@@ -179,10 +206,13 @@ active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
 projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
 pygame.mixer.music.play(loops=-1)#on démarre la musique du menu
-gauche=False
+
+#Variables
+position="Droite"
 menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
-credit=False#de meme avec l'écran des crédits
+credit=False#de meme avec l'écran des crédits et gameover
 gameover=False
+
 #Boucle principale
 while continuer:
     curseur=1#on défini curseur sur le bouton "Joueur" de base
@@ -236,6 +266,7 @@ while continuer:
                     menu=True
         ecran.blit(bgcredit,(0,0))
         pygame.display.update()
+    #Boucle game over
     while gameover:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -251,6 +282,7 @@ while continuer:
         joueur.rect = copy.deepcopy(defaultJoueurPosition)
     #Boucle jeu
     while jeu:
+        #Evenements au clavier
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 continuer = False
@@ -258,12 +290,12 @@ while continuer:
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
                     joueur.deplacement_gauche()
-                    joueur.image = pygame.image.load("persocorentin2.png") 
-                    gauche = True
+                    joueur.image = pygame.image.load("persocorentin2.png") #On inverse l'image du joueur car il va dans l'autre sens
+                    position="Gauche"
                 if event.key == pygame.K_RIGHT:#etc
                     joueur.deplacement_droit()
                     joueur.image = pygame.image.load("persocorentin.png")
-                    gauche = False
+                    position="Droite"
                 if event.key == pygame.K_UP:
                     joueur.jump()
                 if event.key == pygame.K_SPACE:
@@ -279,12 +311,15 @@ while continuer:
                     joueur.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
                     joueur.stop()
-        #mise à jour des élements
+
+        #Mise à jour des élements
         active_sprite_list.update()
         current_level.update()
-        if projectile.tir == False :
+
+        if projectile.tir == False :#on met à jour le projectile constamment pour qu'il suit le joueur
             projectile.rect.x = joueur.rect.x + 30
             projectile.rect.y = joueur.rect.y + 40
+
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
             diff = joueur.rect.right - 500#diference entre la position du joueur et 500 px
             joueur.rect.right = 500
@@ -296,26 +331,35 @@ while continuer:
             current_level.scrolling(diff)
 
         current_position = joueur.rect.x + current_level.monde_scrolling
+
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
             joueur.rect.x = 120#le joueur se place en x = 120 px
-            if current_level_no < len(level_list)-1:
-                current_level_no += 1
-                current_level = level_list[current_level_no]
+            bg = pygame.image.load("bkgcredits.png")
+            if current_level_no < len(level_list)-1:#si il y a plus de niveaux que current_level_no
+                bg = pygame.image.load("bkgcredits.png")
+                current_level_no += 1#on augmente current_level_no de 1
+                current_level = level_list[current_level_no]#on reset la liste des niveaux, avec le nouveau current_level_no
                 joueur.level = current_level
 
-        if joueur.rect.y > ECRAN_HAUTEUR-102:#Test game over
-            gameover=True#game over provisoire
+        if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
+            gameover=True
             jeu=False
-        if joueur.rect.left < 0:
-            joueur.rect.left = 0
+
+        if joueur.rect.left < 0: #si le joueur va trop sur la gauche
+            joueur.rect.left = 0 #on le bloque a la limite de l'ecran
+
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
-        if projectile.tir == True:
-            projectile.update()
+
+        if projectile.tir == True:#si on tire
+            projectile.update()#faire le deplacement du projectile
+
+        print("Position :", current_position)
+        print("Niveau actuel :", current_level)
+
         pygame.time.Clock().tick(60)#vitesse du jeu
         pygame.display.flip()
         pygame.display.update()
+        #Fin de la boucle jeu
+    #Fin de la boucle principale
 pygame.quit()
-
-
-
