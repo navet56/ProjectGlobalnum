@@ -8,6 +8,7 @@
 #    v1.0
 
 import pygame
+import copy
 from pygame.locals import *
 
 #Constantes
@@ -20,7 +21,9 @@ sonjump = pygame.mixer.Sound("jump.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
 bggameover = pygame.image.load("bkgameover.png")
+defaultJoueurPosition = pygame.Rect(50, ECRAN_HAUTEUR - 200, 60, 100)
 bg = pygame.image.load("background.png")
+
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -33,7 +36,7 @@ class Joueur(pygame.sprite.Sprite):
         self.change_x = 0
         self.change_y = 0
         self.level = None
- 
+
     def update(self):
         #Met à jour le joueur
         self.grav()
@@ -52,7 +55,7 @@ class Joueur(pygame.sprite.Sprite):
             elif self.change_y < 0:
                 self.rect.top = bloc.rect.bottom
             self.change_y = 0
- 
+
     def grav(self):
         #Calcule la gravité
         if self.change_y == 0: #Si le sprite ne bouge plus
@@ -62,7 +65,7 @@ class Joueur(pygame.sprite.Sprite):
         if self.rect.y >= ECRAN_HAUTEUR - self.rect.height and self.change_y >= 0: #Si le sprite est en bas de l'ecran moins la hauteur du sprite car sinon ce serait en dessous
             self.change_y = 0 #on stoppe le sprite
             self.rect.y = ECRAN_HAUTEUR - self.rect.height #on met le sprite tout en bas
- 
+
     def jump(self):
         #Permet le saut
         #Vérifie s'il y a une collision à 2 pixels au dessus
@@ -77,10 +80,10 @@ class Joueur(pygame.sprite.Sprite):
 
     def deplacement_gauche(self):
         self.change_x = -6 #on déplace le sprite de 6 pixels
- 
+
     def deplacement_droit(self):
         self.change_x = 6#on déplace le sprite de 6 pixels
- 
+
     def stop(self):
         self.change_x = 0 #on force l'arret
 
@@ -103,8 +106,10 @@ class Projectile(pygame.sprite.Sprite):
             self.rect.x = joueur.rect.x + 30
             self.rect.y = joueur.rect.y + 40
             self.tir = False
-                
-class Plateforme(pygame.sprite.Sprite):
+
+
+class Platform(pygame.sprite.Sprite):
+
     def __init__(self, longueur, hauteur):
         super().__init__()
         self.image = pygame.Surface([longueur, hauteur])
@@ -117,16 +122,23 @@ class Level(object):#Classe Niveau en general
         self.enemy_list = pygame.sprite.Group()
         self.joueur = joueur
         self.monde_scrolling = 0#on définit le scrolling comme étant nul de base
-        
+
     def update(self):
         self.platform_list.update()
         self.enemy_list.update()
- 
+
     def draw(self, ecran):
         ecran.blit(bg,(self.monde_scrolling // 1,0))
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
-        
+
+    def resetScrolling(self):
+        for platform in self.platform_list:
+            platform.rect.x -= self.monde_scrolling
+        for enemy in self.enemy_list:
+            enemy.rect.x -= self.monde_scrolling
+        self.monde_scrolling = 0
+
     def scrolling(self, shift_x):#scrolling 
         self.monde_scrolling += shift_x
         for platform in self.platform_list:#pour toutes les platformes
@@ -188,8 +200,7 @@ level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
 current_level = level_list[current_level_no]
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
-joueur.rect.x = 50
-joueur.rect.y = ECRAN_HAUTEUR - 200
+joueur.rect = copy.deepcopy(defaultJoueurPosition)#on copie la valeur de defaultJoueurPosition dans joueur.rect et non pas la variable en elle-même
 joueur.level = current_level
 active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
 projectile_list.add(projectile)
@@ -260,10 +271,15 @@ while continuer:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-            ecran.blit(bggameover,(0,0))
-            pygame.display.update()
-
+                    gameover=False
+                    jeu=False
+                    menu=True
+        ecran.blit(bggameover,(0,0))
+        pygame.display.update()
+    if joueur.rect != defaultJoueurPosition:
+        joueur.stop()
+        current_level.resetScrolling()
+        joueur.rect = copy.deepcopy(defaultJoueurPosition)
     #Boucle jeu
     while jeu:
         #Evenements au clavier
