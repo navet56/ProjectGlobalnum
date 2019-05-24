@@ -109,7 +109,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.rect.x -= 6
         if self.rect.x > 600 or self.rect.x < 20:
             self.rect.y += 6
-        if self.rect.y >= 720 or self.rect.y <= 0:
+        if self.rect.y >= 720 or self.rect.x <= 0:
             self.rect.x = joueur.rect.x + 30
             self.rect.y = joueur.rect.y + 40
             self.tir = False
@@ -203,7 +203,7 @@ class Level_02(Level): #Classe Level 2
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
-joueur = Joueur()#permet d'ecrire la classe Joueur() comme une variable c'est faux
+joueur = Joueur()#permet d'ecrire la classe objet Joueur() comme une variable utilisable
 projectile = Projectile()
 projectile_list = pygame.sprite.Group()
 level_list = []#on définit la liste vide level_list
@@ -311,7 +311,7 @@ while continuer:
                     pygame.mixer.music.play(loops=-1)
                     jeu=False
                     menu=True
-            if event.type == pygame.KEYUP:#si la touch est relachée :
+            if event.type == pygame.KEYUP:#si la touche est relachée :
                 if event.key == pygame.K_LEFT and joueur.change_x < 0:
                     joueur.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
