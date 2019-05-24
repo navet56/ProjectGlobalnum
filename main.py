@@ -46,15 +46,17 @@ class Joueur(pygame.sprite.Sprite):
         #Met à jour le joueur
         self.grav()
         self.rect.x += self.change_x
-        bloc_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        bloc_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)#collisions
+        
+        #Les boucles suivantes permettent de bloquer les coordonnée du joueur aux cooredonnée de blocs de collisions
         for bloc in bloc_hit_list:
-            if self.change_x > 0:
+            if self.change_x > 0:#pour toutes les blocs de collision, si il y a un deplacement du perso : la position droite du perso devient la position gauche du bloc (pour bloquer)
                 self.rect.right = bloc.rect.left
-            elif self.change_x < 0:
+            elif self.change_x < 0:#et inversement
                 self.rect.left = bloc.rect.right
         self.rect.y += self.change_y
         bloc_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
-        for bloc in bloc_hit_list:
+        for bloc in bloc_hit_list:#pareil pour  le deplacement verticale
             if self.change_y > 0:
                 self.rect.bottom = bloc.rect.top
             elif self.change_y < 0:
@@ -105,9 +107,9 @@ class Projectile(pygame.sprite.Sprite):
                 self.rect.x += 6
             else:
                 self.rect.x -= 6
-        if self.rect.x > 600:
+        if self.rect.x > 600 or self.rect.x < 20:
             self.rect.y += 6
-        if self.rect.y >= 720 or self.rect.x <= 0:
+        if self.rect.y >= 720 or self.rect.y <= 0:
             self.rect.x = joueur.rect.x + 30
             self.rect.y = joueur.rect.y + 40
             self.tir = False
@@ -136,19 +138,20 @@ class Level(object):#Classe Niveau en general
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
 
-    def resetScrolling(self):
+    def resetScrolling(self):#permet de reset le scrolling
         for platform in self.platform_list:
-            platform.rect.x -= self.monde_scrolling
+            platform.rect.x -= self.monde_scrolling#permet de remettre les plateformes à leur position initiale
         for enemy in self.enemy_list:
-            enemy.rect.x -= self.monde_scrolling
-        self.monde_scrolling = 0
-    def resetJeu(self): 
-        joueur.stop()
-        current_level.resetScrolling()
+            enemy.rect.x -= self.monde_scrolling#permet de remetre les ennemis à leur position initiale
+        self.monde_scrolling = 0#on définit le scrolling du monde à 0
+        
+    def resetJeu(self): #permet de reset le jeu
+        joueur.stop()#on stoppe l'avancer du perso
+        current_level.resetScrolling()#on reset le scrolling
         joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
         bg = pygame.image.load("background.png")
-    def scrolling(self, shift_x):#scrolling 
-        self.monde_scrolling += shift_x
+    def scrolling(self, shift_x):#procédure scrolling 
+        self.monde_scrolling += shift_x#
         for platform in self.platform_list:#pour toutes les platformes
             platform.rect.x += shift_x#on les déplacent
         for enemy in self.enemy_list:
@@ -196,15 +199,16 @@ class Level_02(Level): #Classe Level 2
              bloc.joueur = self.joueur
              self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
         
-#Programme principal       
+#Programme principal
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
-joueur = Joueur()#permet d'ecrire la classe Joueur() comme une variable
+joueur = Joueur()#permet d'ecrire la classe Joueur() comme une variable c'est faux
 projectile = Projectile()
 projectile_list = pygame.sprite.Group()
 level_list = []#on définit la liste vide level_list
 level_list.append( Level_01(joueur) )#on ajoute le niveau 1
+level_list.append( Level_02(joueur))
 current_level_no = 0
 current_level = level_list[current_level_no]
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
@@ -290,7 +294,7 @@ while continuer:
                 jeu = False
             if event.type == pygame.KEYDOWN:#Si une touche est préssée
                 if event.key == pygame.K_LEFT:#La touche fleche gauche :
-                    joueur.deplacement_gauche()
+                    joueur.deplacement_gauche()#éffecue le deplacement du joueur
                     joueur.image = pygame.image.load("persocorentin2.png") #On inverse l'image du joueur car il va dans l'autre sens
                     position="Gauche"
                 if event.key == pygame.K_RIGHT:#etc
@@ -307,7 +311,7 @@ while continuer:
                     pygame.mixer.music.play(loops=-1)
                     jeu=False
                     menu=True
-            if event.type == pygame.KEYUP:
+            if event.type == pygame.KEYUP:#si la touch est relachée :
                 if event.key == pygame.K_LEFT and joueur.change_x < 0:
                     joueur.stop()
                 if event.key == pygame.K_RIGHT and joueur.change_x > 0:
@@ -336,6 +340,7 @@ while continuer:
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
             joueur.rect.x = 120#le joueur se place en x = 120 px
             bg = pygame.image.load("bkgcredits.png")
+            level_list.remove(Level_01(joueur))
 
         if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
             gameover=True
