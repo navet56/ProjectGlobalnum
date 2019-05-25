@@ -16,20 +16,28 @@ ECRAN_LONGUEUR = 1280
 ECRAN_HAUTEUR = 720
 bgcredit = pygame.image.load("bkgcredits.png")
 pygame.mixer.init(44100, -16,2,2048)#on initialise mixer (frequence du son, nombre de bits, etc)
+pygame.font.init()
 musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
+songameover = pygame.mixer.Sound("gameover.ogg")
+soncanette = pygame.mixer.Sound("soncanette.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
 bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#position du joueur par default : (x,y,longueur,hauteur)
 bg = pygame.image.load("background.png")
-defaultEnnmyMargotPosition = Rect(240,402,60,110)
+defaultEnemyMargotPosition = Rect(240,402,60,110)
+score = 0
+font = pygame.font.Font(None,36)
+textscorechiffre = font.render(str(score),1,(0,0,0))
+textscore = font.render("Score:",1,(0,0,0))
 
 #Variables
 position="Droite"
 menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
 credit=False#de meme avec l'écran des crédits et gameover
 gameover=False
+
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -49,7 +57,7 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.x += self.change_x
         bloc_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)#collisions
         
-        #Les boucles suivantes permettent de bloquer les coordonnée du joueur aux cooredonnée de blocs de collisions
+        #Les boucles suivantes permettent de bloquer les coordonnée du joueur aux coordonnées de blocs de collisions
         for bloc in bloc_hit_list:
             if self.change_x > 0:#pour toutes les blocs de collision, si il y a un deplacement du perso : la position droite du perso devient la position gauche du bloc (pour bloquer)
                 self.rect.right = bloc.rect.left
@@ -69,8 +77,8 @@ class Joueur(pygame.sprite.Sprite):
         if self.change_y == 0: #Si le sprite ne bouge plus
             self.change_y = 1 #Le faire bouger de 1 px
         else:
-            self.change_y += .4 #sinon le faire bouger de 0.35 px
-        if self.rect.y >= ECRAN_HAUTEUR - self.rect.height and self.change_y >= 0: #Si le sprite est en bas de l'ecran moins la hauteur du sprite car sinon ce serait en dessous
+            self.change_y += .4 #sinon le faire bouger de 0.4 px
+        if self.rect.y >= ECRAN_HAUTEUR - self.rect.height and self.change_y >= 0: #Si le sprite est en bas de l'ecran moins la hauteur du sprite (car sinon ce serait en dessous)
             self.change_y = 0 #on stoppe le sprite
             self.rect.y = ECRAN_HAUTEUR - self.rect.height #on met le sprite tout en bas
 
@@ -84,13 +92,13 @@ class Joueur(pygame.sprite.Sprite):
         #Effectue le saut
         if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
             sonjump.play()
-            self.change_y = -14#-10 car les coordonnéés partent du haut, cela correspond à +10 dans un repère orthonormé classique
+            self.change_y = -14#-14 car les coordonnéés partent du haut, cela correspond à +14 dans un repère orthonormé classique
 
     def deplacement_gauche(self):
-        self.change_x = -6 #on déplace le sprite de 6 pixels
+        self.change_x = -6 #on déplace le sprite de 6 pixels vers la gauche
 
     def deplacement_droit(self):
-        self.change_x = 6#on déplace le sprite de 6 pixels
+        self.change_x = 6#on déplace le sprite de 6 pixels vers la droite
 
     def stop(self):
         self.change_x = 0 #on force l'arret
@@ -120,7 +128,7 @@ class EnemyChat(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load("persopamargot.png")
         self.rect = self.image.get_rect()
-        self.rect = copy.deepcopy(defaultEnnmyMargotPosition)
+        self.rect = copy.deepcopy(defaultEnemyMargotPosition)
         self.level = None
 
 
@@ -158,8 +166,10 @@ class Level(object):#Classe Niveau en general
         joueur.stop()#on stoppe l'avancer du perso
         current_level.resetScrolling()#on reset le scrolling
         joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
-        enemychat.rect = copy.deepcopy(defaultEnnmyMargotPosition)
+        enemychat.rect = copy.deepcopy(defaultEnemyMargotPosition)
+        score = 0
         bg = pygame.image.load("background.png")
+
     def scrolling(self, shift_x):#procédure scrolling 
         self.monde_scrolling += shift_x
         for platform in self.platform_list:#pour toutes les platformes
@@ -191,14 +201,12 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
         
 class Level_02(Level): #Classe Level 2
     def __init__(self, joueur):
-        """ Creation du level 1. """
+        """ Creation du level 2. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
         self.level_limit = -1000
 
-        level = [[100, 2, 20, 630],#plateformes du niveau
-                 [100, 2, 250, 510],#[longueur, largeur, x, y]
-                 [200, 2, 420, 338],
-                 [300, 2, 780, 150],
+        level = [[100, 2, 30, 630],#plateformes du niveau
+                 [100, 2, 260, 510],#[longueur, largeur, x, y]
                  [273, 2, 1, 100],
                  ]
         
@@ -219,7 +227,6 @@ projectile = Projectile()
 projectile_list = pygame.sprite.Group()
 level_list = []#on définit la liste vide level_list
 level_list.append( Level_01(joueur) )#on ajoute le niveau 1
-level_list.append( Level_02(joueur))
 current_level_no = 0
 current_level = level_list[current_level_no]
 current_level.enemy_list.add(enemychat)
@@ -237,9 +244,7 @@ while continuer:
     #Boucle menu
     while menu:#tant que menu=True
         for event in pygame.event.get():
-            if event.type==pygame.QUIT:
-                pygame.quit()
-                quit()
+            if event.type==pygame.QUIT: quit()
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_UP:
                     curseur=curseur-1
@@ -318,6 +323,7 @@ while continuer:
                 if event.key == pygame.K_SPACE:
                     projectile.update()
                     projectile.tir = True
+                    soncanette.play()
                 if event.key == pygame.K_ESCAPE:
                     musique = pygame.mixer.music.load("menu.ogg")
                     pygame.mixer.music.play(loops=-1)
@@ -336,7 +342,6 @@ while continuer:
         if projectile.tir == False :#on met à jour le projectile constamment pour qu'il suit le joueur
             projectile.rect.x = joueur.rect.x + 30
             projectile.rect.y = joueur.rect.y + 40
-
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
             diff = joueur.rect.right - 500#diference entre la position du joueur et 500 px
             joueur.rect.right = 500
@@ -350,16 +355,22 @@ while continuer:
         current_position = joueur.rect.x + current_level.monde_scrolling#on definit une variable qui montre la position du joueur virtuellement
 
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
-            joueur.rect.x = 120#le joueur se place en x = 120 px
             bg = pygame.image.load("bkgcredits.png")
-            level_list.remove(Level_01(joueur))
-        
+            level_list = []
+            level_list.append( Level_02(joueur))
+            current_level.resetJeu()#on reset le scrolling
+            current_level.draw(ecran)
+            pygame.display.update()
+            
         if pygame.sprite.collide_rect(projectile, enemychat) :
-            enemychat.rect.x = enemychat.rect.x +1800
+            enemychat.rect.x += 1200
+            score += 1
+            textscorechiffre = font.render(str(score),1,(0,0,0))
             
         if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
             gameover=True
             jeu=False
+            songameover.play()
 
         if joueur.rect.left < 0: #si le joueur va trop sur la gauche
             joueur.rect.left = 0 #on le bloque a la limite de l'ecran
@@ -372,9 +383,10 @@ while continuer:
 
         print("Position :", current_position)
         print("Niveau actuel :", current_level)
-
+        print(score)
+        ecran.blit(textscorechiffre, (1100,50))
+        ecran.blit(textscore, (1020,50))
         pygame.time.Clock().tick(60)#vitesse du jeu
-        pygame.display.flip()
         pygame.display.update()
         #Fin de la boucle jeu
     #Fin de la boucle principale
