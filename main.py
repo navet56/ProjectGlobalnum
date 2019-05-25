@@ -23,6 +23,7 @@ fondmenu = pygame.image.load("bkgmenu.png")
 bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#position du joueur par default : (x,y,longueur,hauteur)
 bg = pygame.image.load("background.png")
+defaultEnnmyMargotPosition = Rect(240,402,60,110)
 
 #Variables
 position="Droite"
@@ -113,13 +114,13 @@ class Projectile(pygame.sprite.Sprite):
             self.rect.x = joueur.rect.x + 30
             self.rect.y = joueur.rect.y + 40
             self.tir = False
+
 class EnemyChat(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("persopamargot.png")
         self.rect = self.image.get_rect()
-        self.rect.x = 250
-        self.rect.y =410
+        self.rect = copy.deepcopy(defaultEnnmyMargotPosition)
         self.level = None
 
 
@@ -157,9 +158,10 @@ class Level(object):#Classe Niveau en general
         joueur.stop()#on stoppe l'avancer du perso
         current_level.resetScrolling()#on reset le scrolling
         joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
+        enemychat.rect = copy.deepcopy(defaultEnnmyMargotPosition)
         bg = pygame.image.load("background.png")
     def scrolling(self, shift_x):#procédure scrolling 
-        self.monde_scrolling += shift_x#
+        self.monde_scrolling += shift_x
         for platform in self.platform_list:#pour toutes les platformes
             platform.rect.x += shift_x#on les déplacent
         for enemy in self.enemy_list:
