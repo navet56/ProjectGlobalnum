@@ -113,6 +113,14 @@ class Projectile(pygame.sprite.Sprite):
             self.rect.x = joueur.rect.x + 30
             self.rect.y = joueur.rect.y + 40
             self.tir = False
+class EnemyChat(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("enemijaqueline.png")
+        self.rect = self.image.get_rect()
+        self.rect.x = 250
+        self.rect.y =410
+        self.level = None
 
 
 class Plateforme(pygame.sprite.Sprite):
@@ -204,6 +212,7 @@ pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
 joueur = Joueur()#permet d'ecrire la classe objet Joueur() comme une variable utilisable
+enemychat = EnemyChat()
 projectile = Projectile()
 projectile_list = pygame.sprite.Group()
 level_list = []#on définit la liste vide level_list
@@ -211,6 +220,7 @@ level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 level_list.append( Level_02(joueur))
 current_level_no = 0
 current_level = level_list[current_level_no]
+current_level.enemy_list.add(enemychat)
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
 joueur.rect = copy.deepcopy(defaultJoueurPosition)#on copie la valeur de defaultJoueurPosition dans joueur.rect et non pas la variable en elle-même
 joueur.level = current_level
@@ -341,7 +351,10 @@ while continuer:
             joueur.rect.x = 120#le joueur se place en x = 120 px
             bg = pygame.image.load("bkgcredits.png")
             level_list.remove(Level_01(joueur))
-
+        
+        if pygame.sprite.collide_rect(projectile, enemychat) :
+            enemychat.rect.x = enemychat.rect.x +1800
+            
         if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
             gameover=True
             jeu=False
