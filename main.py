@@ -298,6 +298,8 @@ while continuer:
                     jeu=False
                     menu=True
         ecran.blit(bggameover,(0,0))
+        ecran.blit(textscorechiffre, (580,600))
+        ecran.blit(textscore, (500,600))
         pygame.display.update()
         musique = pygame.mixer.music.load("menu.ogg")
     current_level.resetJeu()
