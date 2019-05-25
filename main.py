@@ -29,8 +29,8 @@ bg = pygame.image.load("background.png")
 defaultEnemyMargotPosition = Rect(240,402,60,110)
 score = 0
 font = pygame.font.Font(None,36)
-textscorechiffre = font.render(str(score),1,(0,0,0))
-textscore = font.render("Score:",1,(0,0,0))
+textscorechiffre = font.render(str(score),1,(100,100,100))
+textscore = font.render("Score:",1,(100,100,100))
 
 #Variables
 position="Droite"
@@ -365,7 +365,7 @@ while continuer:
         if pygame.sprite.collide_rect(projectile, enemychat) :
             enemychat.rect.x += 1200
             score += 1
-            textscorechiffre = font.render(str(score),1,(0,0,0))
+            textscorechiffre = font.render(str(score),1,(100,100,100))
             
         if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
             gameover=True
