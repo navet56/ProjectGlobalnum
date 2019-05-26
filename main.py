@@ -18,16 +18,20 @@ bgcredit = pygame.image.load("bkgcredits.png")
 pygame.mixer.init(44100, -16,2,2048)#on initialise mixer (frequence du son, nombre de bits, etc)
 pygame.font.init()
 musique = pygame.mixer.music.load("menu.ogg")
-sonjump = pygame.mixer.Sound("jump.ogg")
+ville = pygame.mixer.Sound("ville.ogg")#
+poubelle = pygame.mixer.Sound("poubelle.ogg")#
+chat = pygame.mixer.Sound("chatson.ogg")#
+margot = pygame.mixer.Sound("margot.ogg")#
+sonjump = pygame.mixer.Sound("jump.ogg")#
 songameover = pygame.mixer.Sound("gameover.ogg")
 soncanette = pygame.mixer.Sound("soncanette.ogg")
-sonreve = pygame.mixer.Sound("dream.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
 bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#position du joueur par default : (x,y,longueur,hauteur)
 bg = pygame.image.load("background.png")
 defaultEnemyMargotPosition = Rect(240,402,60,110)
+defaultEnemyChatPosition = Rect(850, 36, 60, 110)
 font = pygame.font.Font(None,36)
 textscore = font.render("Score:",1,(100,100,100))
 
@@ -123,14 +127,21 @@ class Projectile(pygame.sprite.Sprite):
             self.rect.y = joueur.rect.y + 40
             self.tir = False
 
-class EnemyChat(pygame.sprite.Sprite):
+class EnemyMargot(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("persopamargot.png")
         self.rect = self.image.get_rect()
         self.rect = copy.deepcopy(defaultEnemyMargotPosition)
         self.level = None
-
+        
+class EnemyChat(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("chat.png")
+        self.rect = self.image.get_rect()
+        self.rect = copy.deepcopy(defaultEnemyChatPosition)
+        self.level = None
 
 class Plateforme(pygame.sprite.Sprite):
     def __init__(self, longueur, hauteur):
@@ -167,7 +178,7 @@ class Level(object):#Classe Niveau en general
         current_level.resetScrolling()#on reset le scrolling
         joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
         projectile.tir = False
-        enemychat.rect = copy.deepcopy(defaultEnemyMargotPosition)
+        enemymargot.rect = copy.deepcopy(defaultEnemyMargotPosition)
         score = 0
         bg = pygame.image.load("background.png")
 
@@ -225,13 +236,14 @@ ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
 pygame.display.set_caption("Je veux rentrer !")
 joueur = Joueur()#permet d'ecrire la classe objet Joueur() comme une variable utilisable
 enemychat = EnemyChat()
+enemymargot =EnemyMargot()
 projectile = Projectile()
 projectile_list = pygame.sprite.Group()
 level_list = []#on définit la liste vide level_list
 level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
 current_level = level_list[current_level_no]
-current_level.enemy_list.add(enemychat)
+current_level.enemy_list.add(enemymargot, enemychat)
 active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
 joueur.rect = copy.deepcopy(defaultJoueurPosition)#on copie la valeur de defaultJoueurPosition dans joueur.rect et non pas la variable en elle-même
 joueur.level = current_level
@@ -262,7 +274,8 @@ while continuer:
                         pygame.mixer.music.stop()
                         jeu=True
                         menu=False
-                        musique = pygame.mixer.music.load("level1.ogg")
+                        musique = pygame.mixer.music.load("level1.ogg")#
+                        ville.play()
                         pygame.mixer.music.play(loops=-1)
                     if curseur==2:
                         menu = False
@@ -362,21 +375,30 @@ while continuer:
         current_position = joueur.rect.x + current_level.monde_scrolling#on definit une variable qui montre la position du joueur virtuellement
 
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
-            sonreve.play()
             level_list = []
             level_list.append( Level_02(joueur))
             current_level.resetJeu()#on reset le scrolling
             current_level.draw(ecran)
             pygame.display.update()
             
-        if pygame.sprite.collide_rect(projectile, enemychat) :
-            enemychat.rect.x += 1250
-            enemychat.rect.y += 100
+        if pygame.sprite.collide_rect(projectile, enemymargot):
+            enemymargot.rect.x += 1250
+            enemymargot.rect.y += 100
+            margot.play()
             score += 1
             textscorechiffre = font.render(str(score),1,(100,100,100))
             projectile.tir = False
-         
-        if pygame.sprite.collide_rect(joueur, enemychat) or joueur.rect.bottom > ECRAN_HAUTEUR :
+
+        if pygame.sprite.collide_rect(projectile, enemychat):
+            enemychat.rect.x += 10000
+            enemychat.rect.y += 10000
+            chat.play()
+            poubelle.play()
+            score += 1
+            textscorechiffre = font.render(str(score),1,(100,100,100))
+            projectile.tir = False
+
+        if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR :
             gameover=True
             current_level.resetJeu()
             jeu=False
@@ -392,9 +414,9 @@ while continuer:
             projectile.update()#faire le deplacement du projectile
 
         #Instrumentations pour le debug
-        print("Position :", current_position)
-        print("Niveau actuel :", current_level)
-        print("Score :",score)
+        #print("Position :", current_position)
+        #print("Niveau actuel :", current_level)
+        #print("Score :",score)
 
         #Draw
         ecran.blit(textscorechiffre, (1100,50))
