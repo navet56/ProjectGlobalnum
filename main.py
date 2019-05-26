@@ -121,7 +121,7 @@ class Projectile(pygame.sprite.Sprite):
                 self.rect.x += 6
             else:
                 self.rect.x -= 6
-        if self.rect.x > 600 or self.rect.x < 20:
+        if self.rect.x > 600 or self.rect.x < 100:
             self.rect.y += 6
         if self.rect.y >= 720 or self.rect.x <= 0:
             self.rect.x = joueur.rect.x + 30
@@ -393,8 +393,8 @@ while continuer:
             projectile.tir = False
 
         if pygame.sprite.collide_rect(projectile, enemychat):
-            enemychat.rect.x += 10000
-            enemychat.rect.y += 10000
+            enemychat.rect.x += 1680
+            enemychat.rect.y += 275
             chat.play()
             poubelle.play()
             score += 1
