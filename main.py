@@ -31,7 +31,7 @@ bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#position du joueur par default : (x,y,longueur,hauteur)
 bg = pygame.image.load("background.png")
 defaultEnemyMargotPosition = Rect(240,402,60,110)
-defaultEnemyChatPosition = Rect(850, 36, 60, 110)
+defaultEnemyChatPosition = Rect(163, 0, 60, 110)
 font = pygame.font.Font(None,36)
 textscore = font.render("Score:",1,(100,100,100))
 
@@ -179,6 +179,7 @@ class Level(object):#Classe Niveau en general
         joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
         projectile.tir = False
         enemymargot.rect = copy.deepcopy(defaultEnemyMargotPosition)
+        enemychat.rect = copy.deepcopy(defaultEnemyChatPosition)
         score = 0
         bg = pygame.image.load("background.png")
 
