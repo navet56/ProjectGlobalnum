@@ -219,14 +219,11 @@ enemychat = EnemyChat()
 enemymargot =EnemyMargot()
 projectile = Projectile()
 projectile_list = pygame.sprite.Group()
-level_list = []#on définit la liste vide level_list
-level_list.append( Level_01(joueur) )#on ajoute le niveau 1
-current_level_no = 0
-current_level = level_list[current_level_no]
-current_level.enemy_list.add(enemymargot, enemychat)
+niveau = Level_01(joueur)
+niveau.enemy_list.add(enemymargot, enemychat)
 active_sprite_list = pygame.sprite.Group()#on défini active_sprite_list comme un ensemble de sprite (sprite.Group)
 joueur.rect = copy.deepcopy(defaultJoueurPosition)#on copie la valeur de defaultJoueurPosition dans joueur.rect et non pas la variable en elle-même
-joueur.level = current_level
+joueur.level = niveau
 active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
 projectile_list.add(projectile)
 continuer = 1#on défini continuer comme étant la variable qui va déterminer si la boucle princiaple se fait ou non
@@ -299,7 +296,7 @@ while continuer:
         ecran.blit(textscore, (500,600))
         pygame.display.update()
         musique = pygame.mixer.music.load("menu.ogg")
-    current_level.resetJeu()
+    niveau.resetJeu()
     pygame.mixer.music.play(loops=-1)
 
     #Boucle jeu
@@ -337,7 +334,7 @@ while continuer:
 
         #Mise à jour des élements
         active_sprite_list.update()
-        current_level.update()
+        niveau.update()
 
         if projectile.tir == False :#on met à jour le projectile constamment pour qu'il suit le joueur
             projectile.rect.x = joueur.rect.x + 30
@@ -345,19 +342,19 @@ while continuer:
         if joueur.rect.right >= 500:#si le personnage est à + de 500 px à droite : il reste à 500 et le scrolling s'effectue
             diff = joueur.rect.right - 500#diference entre la position du joueur et 500 px
             joueur.rect.right = 500
-            current_level.scrolling(-diff)
+            niveau.scrolling(-diff)
 
         if joueur.rect.left <= 120:#pareil l'autre coté
             diff = 120 - joueur.rect.left
             joueur.rect.left = 120
-            current_level.scrolling(diff)
+            niveau.scrolling(diff)
 
-        current_position = joueur.rect.x + current_level.monde_scrolling#on definit une variable qui montre la position du joueur virtuellement
+        position_joueur = joueur.rect.x + niveau.monde_scrolling#on definit une variable qui montre la position du joueur virtuellement
 
-        if current_position < current_level.level_limit:#si la positon du joueur dépasse les limites du niveau
+        if position_joueur < niveau.level_limit:#si la positon du joueur dépasse les limites du niveau
             sonreve.play()
-            current_level.resetJeu()#on reset le jeu (scrolling, positions)
-            current_level.draw(ecran)
+            niveau.resetJeu()#on reset le jeu (scrolling, positions)
+            niveau.draw(ecran)
             pygame.display.update()
             
         if pygame.sprite.collide_rect(projectile, enemymargot):
@@ -379,15 +376,15 @@ while continuer:
 
         if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR :
             gameover=True
-            current_level.resetJeu()
+            niveau.resetJeu()
             jeu=False
             songameover.play()
 
-        if current_level.monde_scrolling > 112: #si le joueur va trop sur la gauche
+        if niveau.monde_scrolling > 112: #si le joueur va trop sur la gauche
             joueur.stop()#on le bloque a la limite de l'ecran
-            current_level.monde_scrolling = 112
+            niveau.monde_scrolling = 112
 
-        current_level.draw(ecran)
+        niveau.draw(ecran)
         active_sprite_list.draw(ecran)
 
         if projectile.tir == True:#si on tire
@@ -395,8 +392,8 @@ while continuer:
 
         #Instrumentations pour le debug
         #print("Position :", current_position)
-        #print("Niveau actuel :", current_level)
-        #print(current_level.monde_scrolling)
+        #print("Niveau actuel :", niveau)
+        #print(niveau.monde_scrolling)
         #print("Score :",score)
 
         #Draw
