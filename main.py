@@ -21,6 +21,7 @@ musique = pygame.mixer.music.load("menu.ogg")
 sonjump = pygame.mixer.Sound("jump.ogg")
 songameover = pygame.mixer.Sound("gameover.ogg")
 soncanette = pygame.mixer.Sound("soncanette.ogg")
+sonreve = pygame.mixer.Sound("dream.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
 bggameover = pygame.image.load("bkgameover.png")
@@ -361,6 +362,7 @@ while continuer:
         current_position = joueur.rect.x + current_level.monde_scrolling#on definit une variable qui montre la position du joueur virtuellement
 
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
+            sonreve.play()
             level_list = []
             level_list.append( Level_02(joueur))
             current_level.resetJeu()#on reset le scrolling
