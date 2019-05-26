@@ -204,7 +204,7 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
                  [273, 2, 1, 100],
                  [150, 2, 1500, 615],
                  [400, 2, 1550, 375],
-                 [400, 2, 2200, 615],
+                 [400, 2, 2200, 625],
                  ]
         
         for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
