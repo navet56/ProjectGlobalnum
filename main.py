@@ -181,15 +181,16 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
     def __init__(self, joueur):
         """ Creation du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
-        self.level_limit = -1000
+        self.level_limit = -1900
 
         level = [[100, 2, 20, 630],#plateformes du niveau
                  [100, 2, 250, 510],#[longueur, largeur, x, y]
                  [200, 2, 420, 338],
-                 [300, 2, 780, 150],
+                 [580, 2, 780, 150],
                  [273, 2, 1, 100],
-                 [50, 2, 1300, 300],
-                 [100, 2, 1500, 600],
+                 [150, 2, 1500, 615],
+                 [400, 2, 1550, 375],
+                 [400, 2, 2200, 615],
                  ]
         
         for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
@@ -368,7 +369,8 @@ while continuer:
             pygame.display.update()
             
         if pygame.sprite.collide_rect(projectile, enemychat) :
-            enemychat.rect.x += 1200
+            enemychat.rect.x += 1250
+            enemychat.rect.y += 100
             score += 1
             textscorechiffre = font.render(str(score),1,(100,100,100))
             projectile.tir = False
