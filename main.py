@@ -368,6 +368,10 @@ while continuer:
             enemychat.rect.x += 1200
             score += 1
             textscorechiffre = font.render(str(score),1,(100,100,100))
+         
+        if pygame.sprite.collide_rect(joueur, enemychat)  :
+            jeu = False
+            gameover= True
             
         if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
             gameover=True
