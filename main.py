@@ -93,7 +93,7 @@ class Joueur(pygame.sprite.Sprite):
         self.rect.y -= 2
         
         #Effectue le saut
-        if len(platform_hit_list) > 0 or self.rect.bottom >= ECRAN_HAUTEUR:
+        if len(platform_hit_list) > 0:#si on est sur une plateforme (si il y a collision entre le joueur et la platefroem): on saute
             sonjump.play()
             self.change_y = -14#-14 car les coordonnéés partent du haut, cela correspond à +14 dans un repère orthonormé classique
 
@@ -211,24 +211,6 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
              bloc.rect.y = platform[3]#pareil pour y
              bloc.joueur = self.joueur
              self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
-        
-class Level_02(Level): #Classe Level 2
-    def __init__(self, joueur):
-        """ Creation du level 2. """
-        super().__init__(joueur)#On ajout les variables du init de Level dans cet init
-        self.level_limit = -1000
-
-        level = [[100, 2, 30, 630],#plateformes du niveau
-                 [100, 2, 260, 510],#[longueur, largeur, x, y]
-                 [273, 2, 1, 100],
-                 ]
-        
-        for platform in level:#pour toutes les plateformes dans la liste des plateformes du niveau
-             bloc = Plateforme(platform[0], platform[1])#bloc est de longueur et largeur par exemple 100,30
-             bloc.rect.x = platform[2]#la plateforme se situe en x = 400 par ex
-             bloc.rect.y = platform[3]#pareil pour y
-             bloc.joueur = self.joueur
-             self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
 
 #Programme principal
 pygame.init()
@@ -244,7 +226,7 @@ level_list.append( Level_01(joueur) )#on ajoute le niveau 1
 current_level_no = 0
 current_level = level_list[current_level_no]
 current_level.enemy_list.add(enemymargot, enemychat)
-active_sprite_list = pygame.sprite.Group()#on défini active_sprit_list comme un ensemble de sprite (sprite.Group)
+active_sprite_list = pygame.sprite.Group()#on défini active_sprite_list comme un ensemble de sprite (sprite.Group)
 joueur.rect = copy.deepcopy(defaultJoueurPosition)#on copie la valeur de defaultJoueurPosition dans joueur.rect et non pas la variable en elle-même
 joueur.level = current_level
 active_sprite_list.add(joueur)#on ajoute le joueur dans la liste
@@ -376,8 +358,6 @@ while continuer:
 
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limites du niveau
             sonreve.play()
-            level_list = []
-            level_list.append( Level_02(joueur))
             current_level.resetJeu()#on reset le jeu (scrolling, positions)
             current_level.draw(ecran)
             pygame.display.update()
@@ -405,8 +385,9 @@ while continuer:
             jeu=False
             songameover.play()
 
-        if joueur.rect.left < 0: #si le joueur va trop sur la gauche
-            joueur.rect.left = 0 #on le bloque a la limite de l'ecran
+        if current_level.monde_scrolling > 112: #si le joueur va trop sur la gauche
+            joueur.stop()#on le bloque a la limite de l'ecran
+            current_level.monde_scrolling = 112
 
         current_level.draw(ecran)
         active_sprite_list.draw(ecran)
@@ -417,6 +398,7 @@ while continuer:
         #Instrumentations pour le debug
         #print("Position :", current_position)
         #print("Niveau actuel :", current_level)
+        #print(current_level.monde_scrolling)
         #print("Score :",score)
 
         #Draw
