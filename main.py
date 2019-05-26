@@ -279,6 +279,7 @@ while continuer:
         ecran.blit(fondmenu, (0,0))
         ecran.blit(perso,(760,237))
         pygame.display.update()
+
     #Boucle credits    
     while credit:
         for event in pygame.event.get():
@@ -289,6 +290,7 @@ while continuer:
                     menu=True
         ecran.blit(bgcredit,(0,0))
         pygame.display.update()
+
     #Boucle game over
     while gameover:
         for event in pygame.event.get():
@@ -304,6 +306,7 @@ while continuer:
         musique = pygame.mixer.music.load("menu.ogg")
     current_level.resetJeu()
     pygame.mixer.music.play(loops=-1)
+
     #Boucle jeu
     while jeu:
         #Evenements au clavier
@@ -372,6 +375,7 @@ while continuer:
          
         if pygame.sprite.collide_rect(joueur, enemychat) or joueur.rect.bottom > ECRAN_HAUTEUR :
             gameover=True
+            current_level.resetJeu()
             jeu=False
             songameover.play()
 
