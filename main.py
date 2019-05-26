@@ -21,6 +21,7 @@ musique = pygame.mixer.music.load("menu.ogg")
 ville = pygame.mixer.Sound("ville.ogg")#
 poubelle = pygame.mixer.Sound("poubelle.ogg")#
 chat = pygame.mixer.Sound("chatson.ogg")#
+sonreve = pygame.mixer.Sound("dream.ogg")
 margot = pygame.mixer.Sound("margot.ogg")#
 sonjump = pygame.mixer.Sound("jump.ogg")#
 songameover = pygame.mixer.Sound("gameover.ogg")
