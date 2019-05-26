@@ -165,6 +165,12 @@ class Level(object):#Classe Niveau en general
         self.platform_list.draw(ecran)
         self.enemy_list.draw(ecran)
 
+    def scrolling(self, shift_x):#procédure scrolling 
+        self.monde_scrolling += shift_x
+        for platform in self.platform_list:#pour toutes les platformes
+            platform.rect.x += shift_x#on les déplacent
+        for enemy in self.enemy_list:
+            enemy.rect.x += shift_x
     def resetScrolling(self):#permet de reset le scrolling
         for platform in self.platform_list:
             platform.rect.x -= self.monde_scrolling#permet de remettre les plateformes à leur position initiale
@@ -180,14 +186,6 @@ class Level(object):#Classe Niveau en general
         enemymargot.rect = copy.deepcopy(defaultEnemyMargotPosition)
         enemychat.rect = copy.deepcopy(defaultEnemyChatPosition)
         score = 0
-        bg = pygame.image.load("background.png")
-
-    def scrolling(self, shift_x):#procédure scrolling 
-        self.monde_scrolling += shift_x
-        for platform in self.platform_list:#pour toutes les platformes
-            platform.rect.x += shift_x#on les déplacent
-        for enemy in self.enemy_list:
-            enemy.rect.x += shift_x
 
 class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
     def __init__(self, joueur):
