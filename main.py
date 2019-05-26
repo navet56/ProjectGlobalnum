@@ -41,6 +41,7 @@ position="Droite"
 menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
 credit=False#de meme avec l'écran des crédits et gameover
 gameover=False
+jeu=False
 score = 0
 textscorechiffre = font.render(str(score),1,(100,100,100))
 
@@ -83,9 +84,6 @@ class Joueur(pygame.sprite.Sprite):
             self.change_y = 1 #Le faire bouger de 1 px
         else:
             self.change_y += .4 #sinon le faire bouger de 0.4 px
-        if self.rect.y >= ECRAN_HAUTEUR - self.rect.height and self.change_y >= 0: #Si le sprite est en bas de l'ecran moins la hauteur du sprite (car sinon ce serait en dessous)
-            self.change_y = 0 #on stoppe le sprite
-            self.rect.y = ECRAN_HAUTEUR - self.rect.height #on met le sprite tout en bas
 
     def jump(self):
         #Permet le saut
