@@ -368,6 +368,7 @@ while continuer:
             enemychat.rect.x += 1200
             score += 1
             textscorechiffre = font.render(str(score),1,(100,100,100))
+            projectile.tir = False
          
         if pygame.sprite.collide_rect(joueur, enemychat) or joueur.rect.bottom > ECRAN_HAUTEUR :
             gameover=True
@@ -383,10 +384,12 @@ while continuer:
         if projectile.tir == True:#si on tire
             projectile.update()#faire le deplacement du projectile
 
+        #Instrumentations pour le debug
         print("Position :", current_position)
         print("Niveau actuel :", current_level)
-        print(score)
-        print(gameover)
+        print("Score :",score)
+
+        #Draw
         ecran.blit(textscorechiffre, (1100,50))
         ecran.blit(textscore, (1020,50))
         pygame.time.Clock().tick(60)#vitesse du jeu
