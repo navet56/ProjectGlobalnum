@@ -181,7 +181,7 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
     def __init__(self, joueur):
         """ Creation du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
-        self.level_limit = -1700
+        self.level_limit = -1650
 
         level = [[100, 2, 20, 630],#plateformes du niveau
                  [100, 2, 250, 510],#[longueur, largeur, x, y]
