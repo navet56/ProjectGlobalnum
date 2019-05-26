@@ -27,9 +27,7 @@ bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#position du joueur par default : (x,y,longueur,hauteur)
 bg = pygame.image.load("background.png")
 defaultEnemyMargotPosition = Rect(240,402,60,110)
-score = 0
 font = pygame.font.Font(None,36)
-textscorechiffre = font.render(str(score),1,(100,100,100))
 textscore = font.render("Score:",1,(100,100,100))
 
 #Variables
@@ -37,7 +35,8 @@ position="Droite"
 menu=True#variable boolèene menu qui défini si on démarre la boucle menu ou non
 credit=False#de meme avec l'écran des crédits et gameover
 gameover=False
-
+score = 0
+textscorechiffre = font.render(str(score),1,(100,100,100))
 
 #Classes
 class Joueur(pygame.sprite.Sprite):
@@ -166,6 +165,7 @@ class Level(object):#Classe Niveau en general
         joueur.stop()#on stoppe l'avancer du perso
         current_level.resetScrolling()#on reset le scrolling
         joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
+        projectile.tir = False
         enemychat.rect = copy.deepcopy(defaultEnemyMargotPosition)
         score = 0
         bg = pygame.image.load("background.png")
@@ -216,7 +216,7 @@ class Level_02(Level): #Classe Level 2
              bloc.rect.y = platform[3]#pareil pour y
              bloc.joueur = self.joueur
              self.platform_list.add(bloc)#on ajoute bloc à la liste des plateformes
-        
+
 #Programme principal
 pygame.init()
 ecran = pygame.display.set_mode([ECRAN_LONGUEUR, ECRAN_HAUTEUR])
@@ -369,11 +369,7 @@ while continuer:
             score += 1
             textscorechiffre = font.render(str(score),1,(100,100,100))
          
-        if pygame.sprite.collide_rect(joueur, enemychat)  :
-            jeu = False
-            gameover= True
-            
-        if joueur.rect.bottom > ECRAN_HAUTEUR:#Game over
+        if pygame.sprite.collide_rect(joueur, enemychat) or joueur.rect.bottom > ECRAN_HAUTEUR :
             gameover=True
             jeu=False
             songameover.play()
@@ -390,6 +386,7 @@ while continuer:
         print("Position :", current_position)
         print("Niveau actuel :", current_level)
         print(score)
+        print(gameover)
         ecran.blit(textscorechiffre, (1100,50))
         ecran.blit(textscore, (1020,50))
         pygame.time.Clock().tick(60)#vitesse du jeu
