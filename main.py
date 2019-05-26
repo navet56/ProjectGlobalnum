@@ -181,7 +181,7 @@ class Level_01(Level): #Classe Level 1 qui prend comme base la classe Level
     def __init__(self, joueur):
         """ Creation du level 1. """
         super().__init__(joueur)#On ajout les variables du init de Level dans cet init
-        self.level_limit = -1900
+        self.level_limit = -1700
 
         level = [[100, 2, 20, 630],#plateformes du niveau
                  [100, 2, 250, 510],#[longueur, largeur, x, y]
@@ -361,7 +361,6 @@ while continuer:
         current_position = joueur.rect.x + current_level.monde_scrolling#on definit une variable qui montre la position du joueur virtuellement
 
         if current_position < current_level.level_limit:#si la positon du joueur dépasse les limite du niveau
-            bg = pygame.image.load("bkgcredits.png")
             level_list = []
             level_list.append( Level_02(joueur))
             current_level.resetJeu()#on reset le scrolling
