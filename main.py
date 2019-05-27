@@ -180,7 +180,7 @@ class Level(object):#Classe Niveau en general
         
     def resetJeu(self): #permet de reset le jeu
         joueur.stop()#on stoppe l'avancer du perso
-        current_level.resetScrolling()#on reset le scrolling
+        niveau.resetScrolling()#on reset le scrolling
         joueur.rect = copy.deepcopy(defaultJoueurPosition)#on utilise copy.deepcopy car faire joueur.rect = defaultJoueurPosition ne fonctionne pas, il ne prend pas la valeur
         projectile.tir = False
         enemymargot.rect = copy.deepcopy(defaultEnemyMargotPosition)
