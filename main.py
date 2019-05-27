@@ -377,6 +377,7 @@ while continuer:
         if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR :
             gameover=True
             niveau.resetJeu()
+            score = 0
             jeu=False
             songameover.play()
 
