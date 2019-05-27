@@ -25,6 +25,7 @@ sonreve = pygame.mixer.Sound("dream.ogg")
 margot = pygame.mixer.Sound("margot.ogg")#
 sonjump = pygame.mixer.Sound("jump.ogg")#
 songameover = pygame.mixer.Sound("gameover.ogg")
+sonouh = pygame.mixer.Sound("ouh.ogg")
 soncanette = pygame.mixer.Sound("soncanette.ogg")
 perso = pygame.image.load("persomenu1.png")
 fondmenu = pygame.image.load("bkgmenu.png")
@@ -375,6 +376,7 @@ while continuer:
             projectile.tir = False
 
         if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR :
+            sonouh.play()
             gameover=True
             niveau.resetJeu()
             score = 0
@@ -382,8 +384,10 @@ while continuer:
             songameover.play()
 
         if niveau.monde_scrolling > 112: #si le joueur va trop sur la gauche
+            sonouh.play()
             joueur.stop()#on le bloque a la limite de l'ecran
             niveau.monde_scrolling = 112
+            niveau.resetScrolling()
 
         niveau.draw(ecran)
         active_sprite_list.draw(ecran)
