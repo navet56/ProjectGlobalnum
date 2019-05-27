@@ -375,12 +375,8 @@ while continuer:
             textscorechiffre = font.render(str(score),1,(100,100,100))
             projectile.tir = False
 
-<<<<<<< HEAD
-        if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR :
-            sonouh.play()
-=======
         if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR or pygame.sprite.collide_rect(joueur, enemychat):
->>>>>>> 4c0be56f5038076177d61b4d60108480d250715e
+            sonouh.play()
             gameover=True
             niveau.resetJeu()
             score = 0
