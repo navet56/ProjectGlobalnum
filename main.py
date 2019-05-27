@@ -33,7 +33,7 @@ bggameover = pygame.image.load("bkgameover.png")
 defaultJoueurPosition = Rect(50, ECRAN_HAUTEUR - 200, 60, 100)#position du joueur par default : (x,y,longueur,hauteur)
 bg = pygame.image.load("background.png")
 defaultEnemyMargotPosition = Rect(240,402,60,110)
-defaultEnemyChatPosition = Rect(163, 0, 60, 110)
+defaultEnemyChatPosition = Rect(163, 0, 110, 110)
 font = pygame.font.Font(None,36)
 textscore = font.render("Score:",1,(100,100,100))
 
@@ -375,8 +375,12 @@ while continuer:
             textscorechiffre = font.render(str(score),1,(100,100,100))
             projectile.tir = False
 
+<<<<<<< HEAD
         if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR :
             sonouh.play()
+=======
+        if pygame.sprite.collide_rect(joueur, enemymargot) or joueur.rect.bottom > ECRAN_HAUTEUR or pygame.sprite.collide_rect(joueur, enemychat):
+>>>>>>> 4c0be56f5038076177d61b4d60108480d250715e
             gameover=True
             niveau.resetJeu()
             score = 0
